@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajay C · Embedded Systems Engineer</title>
+    <meta name="description" content="Portfolio of Ajay C — B.E. ECE | Embedded Software Developer specializing in STM32, ARM Cortex-M, FreeRTOS, CAN Bus & TinyML." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome 6 (Free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ═══════════════════════════════════════════════════
+                 CSS VARIABLES — New Design System
+                 ═══════════════════════════════════════════════════ */
+        :root {
+            /* Core Colors */
+            --color-bg: #050B14;
+            --color-surface: #0C1628;
+            --color-surface-2: #111F33;
+            --color-surface-3: #1A2D47;
+            --color-surface-glass: rgba(12, 22, 40, 0.72);
+            --color-border: rgba(56, 132, 255, 0.12);
+            --color-border-strong: rgba(56, 132, 255, 0.28);
+
+            /* Accent */
+            --color-accent: #3884FF;
+            --color-accent-glow: rgba(56, 132, 255, 0.25);
+            --color-accent-dim: rgba(56, 132, 255, 0.08);
+            --color-accent-2: #00D4AA;
+            --color-accent-2-glow: rgba(0, 212, 170, 0.18);
+            --color-accent-3: #F5A623;
+            --color-accent-3-glow: rgba(245, 166, 35, 0.15);
+
+            /* Text */
+            --color-text: #EBF0F8;
+            --color-text-2: #B0C8E8;
+            --color-text-3: #7A94B8;
+            --color-text-4: #4A6A8A;
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #3884FF 0%, #00D4AA 100%);
+            --gradient-card: linear-gradient(145deg, rgba(12, 22, 40, 0.85), rgba(26, 45, 55, 0.60));
+            --gradient-hero: radial-gradient(ellipse at 30% 40%, rgba(56, 132, 255, 0.12) 0%, transparent 70%);
+
+            /* Shadows */
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(56, 132, 255, 0.06);
+            --shadow-card-hover: 0 16px 48px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(56, 132, 255, 0.18);
+            --shadow-float: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(56, 132, 255, 0.08);
+            --shadow-glow: 0 0 40px rgba(56, 132, 255, 0.15);
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+            /* Transitions */
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --duration-fast: 0.18s;
+            --duration-med: 0.40s;
+            --duration-slow: 0.65s;
+        }
+
+        /* ─── Reset & Base ─── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── Background Canvas ─── */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(56, 132, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 132, 255, 0.03) 1px, transparent 1px);
+            background-size: 56px 56px;
+        }
+
+        /* ─── Container ─── */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 NAVIGATION — New Floating Pill
+                 ═══════════════════════════════════════════════════ */
+        .nav-wrapper {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: calc(100% - 48px);
+            max-width: 1200px;
+            pointer-events: none;
+            padding: 0 12px;
+        }
+
+        .nav-bar {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 20px 10px 24px;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--color-border);
+            border-radius: 80px;
+            box-shadow: var(--shadow-float);
+            transition: border-color var(--duration-med) var(--ease-out), box-shadow var(--duration-med) var(--ease-out);
+        }
+
+        .nav-bar:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-float), var(--shadow-glow);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(56, 132, 255, 0.30);
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: var(--color-text);
+        }
+
+        .brand-tag {
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--color-accent-2);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-2);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 40px;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #fff;
+            background: var(--color-accent-dim);
+        }
+
+        .nav-links a i {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-2);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 40px;
+            transition: all var(--duration-fast) var(--ease-out);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-btn:hover {
+            color: #fff;
+            background: var(--color-accent-dim);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 40px;
+        }
+
+        /* ─── Responsive Nav ─── */
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: calc(100% + 12px);
+                left: 12px;
+                right: 12px;
+                background: var(--color-surface-glass);
+                backdrop-filter: blur(28px) saturate(180%);
+                -webkit-backdrop-filter: blur(28px) saturate(180%);
+                border: 1px solid var(--color-border);
+                border-radius: 20px;
+                flex-direction: column;
+                padding: 16px 8px;
+                gap: 2px;
+                box-shadow: var(--shadow-float);
+            }
+            .nav-links.open {
+                display: flex;
+            }
+            .nav-links a {
+                padding: 12px 16px;
+                width: 100%;
+                border-radius: 12px;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-wrapper {
+                top: 12px;
+                width: calc(100% - 24px);
+                padding: 0;
+            }
+            .nav-bar {
+                padding: 8px 14px 8px 18px;
+                border-radius: 60px;
+            }
+            .brand-name {
+                font-size: 0.9rem;
+            }
+            .brand-tag {
+                font-size: 0.5rem;
+            }
+            .brand-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 SECTION HEADERS
+                 ═══════════════════════════════════════════════════ */
+        section {
+            padding: 80px 0 40px;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 48px;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px 6px 14px;
+            background: var(--color-accent-dim);
+            border: 1px solid var(--color-border);
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: var(--color-accent-2);
+            margin-bottom: 16px;
+        }
+
+        .section-badge i {
+            color: var(--color-accent-3);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .section-title span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-sub {
+            font-size: 1.02rem;
+            color: var(--color-text-3);
+            line-height: 1.7;
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 HERO — New Split Layout
+                 ═══════════════════════════════════════════════════ */
+        .hero {
+            min-height: 88vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 0 40px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 60%;
+            height: 80%;
+            background: var(--gradient-hero);
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 56px;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px 8px 16px;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-accent-2);
+            margin-bottom: 24px;
+        }
+
+        .hero-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-accent-2);
+            box-shadow: 0 0 16px var(--color-accent-2-glow);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .hero-headline {
+            font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.08;
+            color: var(--color-text);
+            margin-bottom: 16px;
+        }
+
+        .hero-headline .highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-tagline {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--color-accent-3);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .hero-tagline i {
+            color: var(--color-accent-2);
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: var(--color-text-3);
+            line-height: 1.8;
+            max-width: 540px;
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: var(--gradient-primary);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.92rem;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 8px 28px rgba(56, 132, 255, 0.30);
+            transition: all var(--duration-med) var(--ease-spring);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(56, 132, 255, 0.45);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 60px;
+            color: var(--color-text-2);
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-accent);
+            color: #fff;
+            background: var(--color-accent-dim);
+            transform: translateY(-2px);
+        }
+
+        /* ─── Hero Visual ─── */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 380px;
+        }
+
+        .orbital-ring {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: float-orbit 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-orbit {
+            0% {
+                transform: translateY(0) rotateX(6deg) rotateY(-8deg);
+            }
+            100% {
+                transform: translateY(-18px) rotateX(10deg) rotateY(-4deg);
+            }
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1.5px solid transparent;
+            box-sizing: border-box;
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            border-top: 2px solid var(--color-accent);
+            border-bottom: 2px solid var(--color-accent-2);
+            animation: spin-ring 14s linear infinite;
+            box-shadow: 0 0 30px rgba(56, 132, 255, 0.08);
+        }
+
+        .ring-2 {
+            width: 76%;
+            height: 76%;
+            border-left: 2px solid var(--color-accent-3);
+            border-right: 2px solid var(--color-accent-2);
+            animation: spin-ring 10s linear infinite reverse;
+        }
+
+        .ring-3 {
+            width: 54%;
+            height: 54%;
+            border: 1px dashed rgba(56, 132, 255, 0.25);
+            animation: spin-ring 20s linear infinite;
+        }
+
+        @keyframes spin-ring {
+            0% {
+                transform: rotate(0deg) rotateX(55deg);
+            }
+            100% {
+                transform: rotate(360deg) rotateX(55deg);
+            }
+        }
+
+        .chip-core {
+            position: relative;
+            z-index: 10;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle at 20% 25%, #162A4A, #0A1428);
+            border-radius: 16px;
+            border: 2px solid var(--color-accent);
+            box-shadow: 0 0 50px rgba(56, 132, 255, 0.25), inset 0 0 30px rgba(56, 132, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateZ(20px);
+        }
+
+        .chip-core::before {
+            content: '';
+            position: absolute;
+            inset: -12px 16px;
+            background: repeating-linear-gradient(to right, transparent, transparent 8px, var(--color-accent-3) 8px, var(--color-accent-3) 10px);
+            z-index: -1;
+            border-radius: 4px;
+        }
+
+        .chip-core::after {
+            content: '';
+            position: absolute;
+            inset: 16px -12px;
+            background: repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--color-accent-3) 8px, var(--color-accent-3) 10px);
+            z-index: -1;
+            border-radius: 4px;
+        }
+
+        .chip-inner {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 14px;
+            background: radial-gradient(circle at 30% 30%, #1A2D47, #0A1428);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip-inner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
+            transform: skewX(-25deg);
+            animation: scan-chip 5s infinite;
+        }
+
+        @keyframes scan-chip {
+            0%,
+            60% {
+                left: -100%;
+            }
+            100% {
+                left: 200%;
+            }
+        }
+
+        .chip-logo {
+            font-family: var(--font-mono);
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--color-accent-2);
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.30);
+        }
+
+        .chip-model {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-text-2);
+            letter-spacing: 1px;
+        }
+
+        .orbit-tag {
+            position: absolute;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            border-radius: 40px;
+            padding: 6px 14px 6px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--color-text-2);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 20;
+            transition: all var(--duration-med) var(--ease-spring);
+            white-space: nowrap;
+        }
+
+        .orbit-tag:hover {
+            transform: scale(1.10) translateY(-4px);
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .orbit-tag i {
+            color: var(--color-accent-2);
+        }
+
+        .tag-1 {
+            top: 2%;
+            left: -8%;
+            animation: float-tag-1 7s ease-in-out infinite alternate;
+        }
+        .tag-2 {
+            top: -2%;
+            right: -10%;
+            animation: float-tag-2 8s ease-in-out infinite alternate;
+        }
+        .tag-3 {
+            bottom: 10%;
+            left: -14%;
+            animation: float-tag-3 6.5s ease-in-out infinite alternate;
+        }
+        .tag-4 {
+            bottom: 4%;
+            right: -12%;
+            animation: float-tag-1 9s ease-in-out infinite alternate;
+        }
+        .tag-5 {
+            top: 42%;
+            right: -28%;
+            animation: float-tag-2 7.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-tag-1 {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes float-tag-2 {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(12px);
+            }
+        }
+        @keyframes float-tag-3 {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            .hero-content {
+                align-items: center;
+            }
+            .hero-desc {
+                max-width: 100%;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .orbital-ring {
+                width: 280px;
+                height: 280px;
+            }
+            .chip-core {
+                width: 100px;
+                height: 100px;
+            }
+            .chip-logo {
+                font-size: 1.4rem;
+            }
+            .orbit-tag {
+                font-size: 0.6rem;
+                padding: 4px 10px;
+            }
+            .tag-5 {
+                right: -18%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .orbital-ring {
+                width: 210px;
+                height: 210px;
+            }
+            .chip-core {
+                width: 76px;
+                height: 76px;
+                border-radius: 12px;
+            }
+            .chip-logo {
+                font-size: 1.1rem;
+            }
+            .chip-model {
+                font-size: 0.6rem;
+            }
+            .orbit-tag {
+                font-size: 0.55rem;
+                padding: 3px 8px;
+            }
+            .tag-1 {
+                left: -4%;
+            }
+            .tag-2 {
+                right: -4%;
+            }
+            .tag-3 {
+                left: -6%;
+            }
+            .tag-4 {
+                right: -6%;
+            }
+            .tag-5 {
+                display: none;
+            }
+            .hero-headline {
+                font-size: 2rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 QUICK HUB
+                 ═══════════════════════════════════════════════════ */
+        .quick-hub {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin: 8px 0 48px;
+        }
+
+        .hub-tile {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 20px 16px 18px;
+            text-decoration: none;
+            color: var(--color-text);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: all var(--duration-med) var(--ease-spring);
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+        }
+
+        .hub-tile:hover {
+            transform: translateY(-6px);
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card-hover);
+            background: var(--color-surface-2);
+        }
+
+        .hub-tile .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--color-accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--color-accent-2);
+            margin-bottom: 12px;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .hub-tile:hover .icon {
+            background: var(--gradient-primary);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .hub-tile .label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .hub-tile .desc {
+            font-size: 0.78rem;
+            color: var(--color-text-3);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .hub-tile .arrow {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--color-accent);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .quick-hub {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .hub-tile {
+                padding: 16px 14px;
+            }
+            .hub-tile .desc {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 ABOUT — Glass Panels
+                 ═══════════════════════════════════════════════════ */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 28px;
+        }
+
+        .glass-card {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            padding: 28px 32px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--duration-med) var(--ease-out);
+        }
+
+        .glass-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .card-header .left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header .left i {
+            color: var(--color-accent-2);
+            font-size: 1.2rem;
+        }
+
+        .card-header .left h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .card-header .badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-accent-3);
+            background: rgba(245, 166, 35, 0.08);
+            border: 1px solid rgba(245, 166, 35, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .about-text {
+            font-size: 1rem;
+            color: var(--color-text-2);
+            line-height: 1.85;
+            margin-bottom: 20px;
+        }
+
+        .about-text strong {
+            color: var(--color-text);
+        }
+
+        .mindset-box {
+            background: var(--color-surface-2);
+            border-radius: 16px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--color-accent);
+            margin-top: 16px;
+        }
+
+        .mindset-box .title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-accent-2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mindset-box ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mindset-box ul li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--color-text-2);
+            line-height: 1.5;
+        }
+
+        .mindset-box ul li i {
+            color: var(--color-accent-2);
+            margin-top: 3px;
+            font-size: 0.75rem;
+        }
+
+        .pipeline-box {
+            background: #070E1A;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            line-height: 1.7;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-2);
+        }
+
+        .pipeline-box .tag {
+            color: var(--color-accent-2);
+            font-weight: 700;
+        }
+
+        /* ─── Specs ─── */
+        .spec-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .spec-item {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .spec-item:hover {
+            border-color: var(--color-accent);
+        }
+
+        .spec-item .label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-accent-2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .spec-item .value {
+            font-size: 0.92rem;
+            color: var(--color-text-2);
+            line-height: 1.7;
+        }
+
+        .spec-item .value strong {
+            color: var(--color-text);
+        }
+
+        .spec-item .value a {
+            color: var(--color-accent-2);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .gauge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+        }
+
+        .gauge-track {
+            width: 100%;
+            height: 6px;
+            background: var(--color-surface-3);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 20px 18px;
+            }
+            .card-header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 DIAGNOSTICS CAROUSEL
+                 ═══════════════════════════════════════════════════ */
+        .diag-container {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            border-radius: 28px;
+            padding: 28px 32px 32px;
+            box-shadow: var(--shadow-float);
+            max-width: 880px;
+            margin: 0 auto;
+        }
+
+        .diag-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .diag-header .left .badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--color-accent-3);
+        }
+
+        .diag-header .left h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .diag-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .diag-tabs button {
+            padding: 8px 18px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--color-text-3);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .diag-tabs button:hover {
+            color: #fff;
+            border-color: var(--color-accent);
+        }
+
+        .diag-tabs button.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(56, 132, 255, 0.30);
+        }
+
+        .carousel-viewport {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #080F1C;
+            border: 1px solid var(--color-border);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #080F1C;
+        }
+
+        .carousel-slide .img-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #080F1C;
+            overflow: hidden;
+        }
+
+        .carousel-slide .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-slide .caption {
+            padding: 16px 24px 20px;
+            background: #0A1428;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .carousel-slide .caption .meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-accent-2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .carousel-slide .caption .desc {
+            font-size: 0.9rem;
+            color: var(--color-text-2);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .carousel-dots button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-border);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .carousel-dots button.active {
+            background: var(--color-accent);
+            width: 32px;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(56, 132, 255, 0.30);
+        }
+
+        @media (max-width: 600px) {
+            .diag-container {
+                padding: 20px 16px;
+            }
+            .diag-header .left h3 {
+                font-size: 1.05rem;
+            }
+            .carousel-slide .caption {
+                padding: 12px 16px 16px;
+            }
+            .carousel-slide .caption .desc {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 SKILLS
+                 ═══════════════════════════════════════════════════ */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-module {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 24px 22px 22px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--duration-med) var(--ease-spring);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .skill-module:hover {
+            transform: translateY(-6px);
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .skill-module .head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .skill-module .head .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--color-accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent-2);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .skill-module:hover .head .icon {
+            background: var(--gradient-primary);
+            color: #fff;
+        }
+
+        .skill-module .head h4 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .skill-tag {
+            padding: 4px 14px 4px 12px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-2);
+            transition: all var(--duration-fast) var(--ease-out);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .skill-tag:hover {
+            border-color: var(--color-accent);
+            color: #fff;
+            background: var(--color-accent-dim);
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 PROJECTS
+                 ═══════════════════════════════════════════════════ */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-text-3);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .filter-btn:hover {
+            color: #fff;
+            border-color: var(--color-accent);
+        }
+
+        .filter-btn.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(56, 132, 255, 0.25);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: all var(--duration-med) var(--ease-spring);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .project-card .meta {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--color-text-4);
+        }
+
+        .project-card .meta .id {
+            color: var(--color-accent-2);
+        }
+
+        .project-card .media {
+            width: 100%;
+            height: 190px;
+            background: var(--color-surface-2);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card .media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s var(--ease-spring);
+        }
+
+        .project-card:hover .media img {
+            transform: scale(1.05);
+        }
+
+        .project-card .body {
+            padding: 18px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .project-card .body .title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color var(--duration-fast) var(--ease-out);
+            margin-bottom: 4px;
+        }
+
+        .project-card .body .title:hover {
+            color: var(--color-accent-2);
+        }
+
+        .project-card .body .caption {
+            font-size: 0.85rem;
+            color: var(--color-text-3);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+
+        .project-card .body .techs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+
+        .project-card .body .techs span {
+            padding: 2px 12px;
+            background: var(--color-accent-dim);
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--color-accent-2);
+        }
+
+        .project-card .body .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .project-card .body .footer .link {
+            color: var(--color-accent-2);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .project-card .body .footer .link:hover {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 600px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 CERTIFICATIONS
+                 ═══════════════════════════════════════════════════ */
+        .certs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .cert-card {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: all var(--duration-med) var(--ease-spring);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cert-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .cert-card .frame {
+            position: relative;
+            width: 100%;
+            height: 170px;
+            background: var(--color-surface-2);
+            overflow: hidden;
+        }
+
+        .cert-card .frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s var(--ease-spring);
+        }
+
+        .cert-card:hover .frame img {
+            transform: scale(1.05);
+        }
+
+        .cert-card .frame .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(56, 132, 255, 0.75), transparent 65%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 16px;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity var(--duration-fast) var(--ease-out);
+        }
+
+        .cert-card:hover .frame .overlay {
+            opacity: 1;
+        }
+
+        .cert-card .info {
+            padding: 16px 20px 20px;
+        }
+
+        .cert-card .info .issuer {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--color-accent-3);
+        }
+
+        .cert-card .info .name {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.4;
+        }
+
+        /* ─── Lightbox ─── */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 11, 20, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox .inner {
+            position: relative;
+            max-width: 90vw;
+            max-height: 88vh;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+        }
+
+        .lightbox .inner img {
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .lightbox .close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .lightbox .close:hover {
+            background: #fff;
+            color: #0A1428;
+            transform: scale(1.08);
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 RESOURCES
+                 ═══════════════════════════════════════════════════ */
+        .resources-box {
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            border-radius: 28px;
+            padding: 28px 32px;
+            max-width: 880px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-float);
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--color-border);
+            text-decoration: none;
+            color: var(--color-text);
+            border-radius: 12px;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+
+        .resource-item:hover {
+            background: var(--color-accent-dim);
+            transform: translateX(6px);
+        }
+
+        .resource-item .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .resource-item .left .idx {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--color-accent-2);
+            flex-shrink: 0;
+        }
+
+        .resource-item:hover .left .idx {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .resource-item .left .info .name {
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
+        .resource-item .left .info .sub {
+            font-size: 0.72rem;
+            color: var(--color-text-4);
+        }
+
+        .resource-item .arrow {
+            color: var(--color-text-4);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .resource-item:hover .arrow {
+            color: var(--color-accent-2);
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 600px) {
+            .resources-box {
+                padding: 20px 16px;
+            }
+            .resource-item {
+                padding: 12px 8px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .resource-item .left .info .name {
+                font-size: 0.82rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 CONTACT
+                 ═══════════════════════════════════════════════════ */
+        .contact-box {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            border-radius: 28px;
+            padding: 44px 40px 40px;
+            box-shadow: var(--shadow-float);
+            text-align: center;
+        }
+
+        .contact-box .message {
+            font-size: 1.05rem;
+            color: var(--color-text-2);
+            line-height: 1.9;
+            margin-bottom: 32px;
+        }
+
+        .contact-box .message strong {
+            color: var(--color-text);
+        }
+
+        .contact-channels {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .contact-channels a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: 60px;
+            color: var(--color-text-2);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .contact-channels a:hover {
+            border-color: var(--color-accent);
+            color: #fff;
+            background: var(--color-accent-dim);
+            transform: translateY(-3px);
+        }
+
+        .contact-channels a.primary {
+            background: var(--gradient-primary);
+            color: #fff;
+            border: none;
+            box-shadow: 0 8px 28px rgba(56, 132, 255, 0.25);
+        }
+
+        .contact-channels a.primary:hover {
+            box-shadow: 0 16px 40px rgba(56, 132, 255, 0.40);
+            transform: translateY(-3px);
+        }
+
+        .contact-box .signature {
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--color-text-3);
+            line-height: 1.8;
+        }
+
+        .contact-box .signature strong {
+            color: var(--color-text);
+            font-size: 0.95rem;
+        }
+
+        .contact-box .signature a {
+            color: var(--color-accent-2);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .contact-box {
+                padding: 28px 20px;
+            }
+            .contact-channels a {
+                padding: 12px 20px;
+                font-size: 0.82rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 FOOTER
+                 ═══════════════════════════════════════════════════ */
+        footer {
+            margin-top: 64px;
+            padding: 32px 24px;
+            background: var(--color-surface-glass);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-inner .copy {
+            font-size: 0.88rem;
+            color: var(--color-text-3);
+        }
+
+        .footer-inner .tele {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--color-accent-2);
+        }
+
+        @media (max-width: 600px) {
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+                 UTILITY
+                 ═══════════════════════════════════════════════════ */
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Background Canvas ─── -->
+    <canvas id="bgCanvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+    NAVIGATION
+    ═══════════════════════════════════════════════════ -->
+    <div class="nav-wrapper">
+        <nav class="nav-bar" aria-label="Main Navigation">
+            <a href="#home" class="nav-brand">
+                <span class="brand-icon"><i class="fas fa-microchip"></i></span>
+                <span class="brand-text">
+                    <span class="brand-name">AJAY C</span>
+                    <span class="brand-tag">STM32 · RTOS</span>
+                </span>
+            </a>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
+                <li><a href="#debugging"><i class="fas fa-wave-square"></i> Debug</a></li>
+                <li><a href="#skills"><i class="fas fa-microchip"></i> Skills</a></li>
+                <li><a href="#projects"><i class="fas fa-folder-open"></i> Projects</a></li>
+                <li><a href="#certifications"><i class="fas fa-certificate"></i> Certs</a></li>
+                <li><a href="#resources"><i class="fas fa-book"></i> Resources</a></li>
+                <li><a href="#contact"><i class="fas fa-paper-plane"></i> Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+    APP
+    ═══════════════════════════════════════════════════ -->
+    <div class="app">
+
+        <!-- ─── HERO ─── -->
+        <section id="home" class="hero">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-status">
+                        <span class="dot"></span>
+                        <span>ARM Cortex-M4 · 168 MHz · ACTIVE</span>
+                    </div>
+                    <h1 class="hero-headline">
+                        Engineering the<br />
+                        <span class="highlight">Embedded</span> World
+                    </h1>
+                    <div class="hero-tagline">
+                        <i class="fas fa-bolt"></i> Small Chips. Massive Impact.
+                    </div>
+                    <p class="hero-desc">
+                        Aspiring Embedded Software Developer passionate about bare-metal firmware,
+                        deterministic FreeRTOS architectures, automotive CAN bus, and Edge AI on
+                        STM32 microcontrollers.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn-primary">
+                            <i class="fas fa-code-branch"></i> Explore Firmware
+                        </a>
+                        <a href="#debugging" class="btn-secondary">
+                            <i class="fas fa-magnifying-glass-chart"></i> Debug Lab
+                        </a>
+                        <a href="https://raw.githubusercontent.com/aj-0/testing/main/AJ.pdf" target="_blank" download class="btn-secondary">
+                            <i class="fas fa-file-pdf"></i> Resume
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="orbital-ring">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
+
+                        <div class="chip-core">
+                            <div class="chip-inner">
+                                <span class="chip-logo">ST</span>
+                                <span class="chip-model">STM32F407</span>
+                            </div>
+                        </div>
+
+                        <div class="orbit-tag tag-1"><i class="fas fa-microchip"></i> Cortex-M4 @ 168MHz</div>
+                        <div class="orbit-tag tag-2"><i class="fas fa-network-wired"></i> CAN 2.0B / ETH</div>
+                        <div class="orbit-tag tag-3"><i class="fas fa-cubes"></i> FreeRTOS Core</div>
+                        <div class="orbit-tag tag-4"><i class="fas fa-brain"></i> TinyML / AI</div>
+                        <div class="orbit-tag tag-5"><i class="fas fa-bug"></i> SWD / ST-Link</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── QUICK HUB ─── -->
+        <div class="quick-hub">
+            <a href="#about" class="hub-tile">
+                <div class="icon"><i class="fas fa-user"></i></div>
+                <div class="label">About</div>
+                <div class="desc">Background &amp; mindset</div>
+                <div class="arrow">→ View</div>
+            </a>
+            <a href="#skills" class="hub-tile">
+                <div class="icon"><i class="fas fa-microchip"></i></div>
+                <div class="label">Skills</div>
+                <div class="desc">MCUs, protocols, tools</div>
+                <div class="arrow">→ View</div>
+            </a>
+            <a href="#projects" class="hub-tile">
+                <div class="icon"><i class="fas fa-folder-open"></i></div>
+                <div class="label">Projects</div>
+                <div class="desc">Bare metal, RTOS, TinyML</div>
+                <div class="arrow">→ View</div>
+            </a>
+            <a href="#certifications" class="hub-tile">
+                <div class="icon"><i class="fas fa-certificate"></i></div>
+                <div class="label">Certifications</div>
+                <div class="desc">Courses &amp; accreditations</div>
+                <div class="arrow">→ View</div>
+            </a>
+            <a href="#resources" class="hub-tile">
+                <div class="icon"><i class="fas fa-book"></i></div>
+                <div class="label">Resources</div>
+                <div class="desc">Manuals &amp; datasheets</div>
+                <div class="arrow">→ View</div>
+            </a>
+            <a href="#contact" class="hub-tile">
+                <div class="icon"><i class="fas fa-paper-plane"></i></div>
+                <div class="label">Contact</div>
+                <div class="desc">Let's connect</div>
+                <div class="arrow">→ View</div>
+            </a>
+        </div>
+
+        <!-- ─── ABOUT ─── -->
+        <section id="about">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-microchip"></i> System Profile</div>
+                <h2 class="section-title">About <span>Me</span></h2>
+                <p class="section-sub">Hands-on engineer dedicated to hardware registers, deterministic kernels, and robust firmware design.</p>
+            </div>
+
+            <div class="about-grid">
+                <!-- Main Profile -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="left">
+                            <i class="fas fa-fingerprint"></i>
+                            <h3>Engineering Profile &amp; Mission</h3>
+                        </div>
+                        <span class="badge">CORE_M4_PROFILE</span>
+                    </div>
+
+                    <div class="about-text">
+                        <p>
+                            To build a career in Embedded Software Development by gaining practical experience and developing skills that meet industry standards. With extensive hands-on experience on the <strong>STM32 NUCLEO-F411RE</strong> and <strong>STM32F407 Discovery</strong> platforms, I focus on strengthening my expertise in Embedded C, STM32, RTOS, debugging, and system-level programming through real-world projects and continuous learning. I leverage <strong>AI-assisted tools</strong> to support debugging, analysis, and problem-solving while developing reliable, production-quality embedded software.
+                        </p>
+                    </div>
+
+                    <div class="mindset-box">
+                        <div class="title"><i class="fas fa-compass-drafting"></i> My Core Engineering Mindset</div>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> <strong>Practical Skills</strong> &gt; Collecting Certificates</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Debugging &amp; Root Cause Analysis</strong> &gt; Trial-and-Error Coding</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Understanding Logic</strong> &gt; Copy-Paste Programming</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Learning by Building</strong> &gt; Learning by Watching Tutorials</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>System-Level Thinking</strong> &gt; Isolated Feature Development</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Reliability &amp; Quality</strong> &gt; Quick Output</li>
+                        </ul>
+
+                        <div class="pipeline-box">
+                            <span class="tag">⚙ DEBUGGING PIPELINE EXECUTION:</span>
+                            Observe System Behavior → Analyze Runtime Data → Identify Root Cause → Implement Solution → Verify System Stability Output
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specs -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="left">
+                            <i class="fas fa-address-card"></i>
+                            <h3>Hardware Specs</h3>
+                        </div>
+                        <span class="badge">INFO_BLOCK</span>
+                    </div>
+
+                    <div class="spec-list">
+                        <div class="spec-item">
+                            <div class="label"><i class="fas fa-user-circle"></i> Personal Info</div>
+                            <div class="value">
+                                <strong>Name:</strong> Ajay C<br />
+                                <strong>College:</strong>
+                                <a href="https://www.kpriet.ac.in" target="_blank" rel="noopener">KPR Institute of Engineering &amp; Technology</a><br />
+                                <strong>Stream:</strong> B.E. ECE (2024–2028)<br />
+                                <strong>Place:</strong> Tiruppur, Tamil Nadu<br />
+                                <strong>Native:</strong> Madurai, Tamil Nadu
+                            </div>
+                        </div>
+
+                        <div class="spec-item">
+                            <div class="label"><i class="fas fa-chart-line"></i> Academic Metrics</div>
+                            <div class="value">
+                                <div class="gauge-row"><span><strong>CGPA:</strong> 7.6 / 10</span> <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--color-accent-2);">76%</span></div>
+                                <div class="gauge-track"><div class="gauge-fill" style="width:76%;"></div></div>
+
+                                <div class="gauge-row"><span><strong>12th Grade:</strong> 84.16% (State Board)</span> <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--color-accent-2);">84.16%</span></div>
+                                <div class="gauge-track"><div class="gauge-fill" style="width:84.16%;"></div></div>
+
+                                <div class="gauge-row"><span><strong>10th Grade:</strong> 75.8% (State Board)</span> <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--color-accent-2);">75.8%</span></div>
+                                <div class="gauge-track"><div class="gauge-fill" style="width:75.8%;"></div></div>
+
+                                <strong>Year:</strong> 3rd Year 5th Sem (Pursuing)
+                            </div>
+                        </div>
+
+                        <div class="spec-item">
+                            <div class="label"><i class="fas fa-briefcase"></i> Industry Internship</div>
+                            <div class="value">
+                                → <strong>Appin Technology</strong><br />
+                                → <strong>KIO Tech</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── DIAGNOSTICS CAROUSEL ─── -->
+        <section id="debugging">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-wave-square"></i> Signal Protocol Lab</div>
+                <h2 class="section-title">Debugging &amp; <span>Analysis</span></h2>
+                <p class="section-sub">Protocol packet captures, hardware frame analysis, and runtime verification diagnostics.</p>
+            </div>
+
+            <div class="diag-container">
+                <div class="diag-header">
+                    <div class="left">
+                        <div class="badge">Hardware Protocol Inspector</div>
+                        <h3>Oscilloscope &amp; Frame Verification</h3>
+                    </div>
+                    <div class="diag-tabs" id="diagTabs"></div>
+                </div>
+
+                <div class="carousel-viewport">
+                    <div class="carousel-track" id="diagTrack"></div>
+                </div>
+
+                <div class="carousel-dots" id="diagDots"></div>
+            </div>
+        </section>
+
+        <!-- ─── SKILLS ─── -->
+        <section id="skills">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-microchip"></i> Silicon &amp; Tools</div>
+                <h2 class="section-title">Skills &amp; <span>Technologies</span></h2>
+                <p class="section-sub">Modular hardware architectures, low-level drivers, real-time operating systems, and edge intelligence.</p>
+            </div>
+
+            <div class="skills-grid" id="skillsGrid"></div>
+        </section>
+
+        <!-- ─── PROJECTS ─── -->
+        <section id="projects">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-folder-open"></i> Firmware &amp; Hardware Builds</div>
+                <h2 class="section-title">Featured <span>Projects</span></h2>
+                <p class="section-sub">(Click any project to view the source code and project details on GitHub.)</p>
+            </div>
+
+            <div class="filter-bar" id="filterBar"></div>
+            <div class="projects-grid" id="projectsGrid"></div>
+        </section>
+
+        <!-- ─── CERTIFICATIONS ─── -->
+        <section id="certifications">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-certificate"></i> Verified Accreditations</div>
+                <h2 class="section-title">My <span>Certifications</span></h2>
+                <p class="section-sub">(Certifications are used to reinforce my learning, not define my skills.)</p>
+            </div>
+
+            <div class="certs-grid" id="certsGrid"></div>
+        </section>
+
+        <!-- ─── LIGHTBOX ─── -->
+        <div class="lightbox" id="certLightbox" onclick="closeLightbox()">
+            <button class="close" onclick="closeLightbox()" aria-label="Close">✕</button>
+            <div class="inner" onclick="event.stopPropagation()">
+                <img id="lightboxImg" src="" alt="Certificate Preview" />
+            </div>
+        </div>
+
+        <!-- ─── RESOURCES ─── -->
+        <section id="resources">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-book-bookmark"></i> Technical Archive</div>
+                <h2 class="section-title">My <span>Resources</span></h2>
+                <p class="section-sub">Official silicon reference manuals, hardware schematics, and architecture programming guides.</p>
+            </div>
+
+            <div class="resources-box" id="resourcesBox"></div>
+        </section>
+
+        <!-- ─── CONTACT ─── -->
+        <section id="contact">
+            <div class="section-header">
+                <div class="section-badge"><i class="fas fa-satellite"></i> Communication Bus</div>
+                <h2 class="section-title">Let's <span>Connect</span></h2>
+                <p class="section-sub">Open for Embedded Systems Internships, automotive firmware engineering, and MCU projects.</p>
+            </div>
+
+            <div class="contact-box">
+                <p class="message">
+                    I am currently seeking opportunities for an
+                    <strong>Embedded Systems Internship</strong>, particularly in the
+                    automotive domain or other hands-on roles involving
+                    <strong>MCUs and RTOS</strong>. I would be grateful for the opportunity
+                    to learn, contribute, and gain practical industry experience.
+                    Please feel free to reach out!
+                </p>
+
+                <div class="contact-channels">
+                    <a href="mailto:ajay360x@gmail.com" class="primary">
+                        <i class="fas fa-envelope"></i> Email Transmission
+                    </a>
+                    <a href="https://linkedin.com/in/mr-aj" target="_blank" rel="noopener">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a href="https://github.com/aj-0" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i> GitHub Repos
+                    </a>
+                </div>
+
+                <div class="signature">
+                    <strong>Ajay C</strong><br />
+                    Tiruppur, Tamil Nadu &nbsp;·&nbsp;
+                    <a href="mailto:ajay360x@gmail.com">ajay360x@gmail.com</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+        <div class="footer-inner">
+            <div class="copy">&copy; 2026 Ajay C — B.E. ECE | Embedded Software Developer</div>
+            <div class="tele">● HARDWARE: STM32F407VGT6 &nbsp;|&nbsp; CORE: ARM CORTEX-M4</div>
+        </div>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════════════
+    JAVASCRIPT — All Data & Logic
+    ═══════════════════════════════════════════════════ -->
+    <script>
+        // ──────────────────────────────────────────────
+        // 1. BACKGROUND ENGINE — Isometric 3D Network
+        // ──────────────────────────────────────────────
+        (function bgEngine() {
+            const canvas = document.getElementById('bgCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, traces = [],
+                signals = [],
+                time = 0;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                generate();
+            }
+
+            function generate() {
+                traces = [];
+                signals = [];
+                const count = Math.floor(Math.min(w, h) / 28);
+                for (let i = 0; i < count; i++) {
+                    let cx = (Math.random() - 0.5) * 280;
+                    let cy = (Math.random() - 0.5) * 280;
+                    let path = [{ x: cx, y: cy }];
+                    for (let j = 0; j < 4; j++) {
+                        const len = 80 + Math.random() * 280;
+                        if (Math.random() > 0.5) cx += (Math.random() > 0.5 ? 1 : -1) * len;
+                        else cy += (Math.random() > 0.5 ? 1 : -1) * len;
+                        path.push({ x: cx, y: cy });
+                    }
+                    const color = Math.random() > 0.5 ?
+                        'rgba(56,132,255,0.18)' :
+                        'rgba(0,212,170,0.14)';
+                    traces.push({ path, color });
+                    for (let k = 0; k < 2; k++) {
+                        signals.push({
+                            traceIdx: i,
+                            progress: Math.random(),
+                            speed: 0.0015 + Math.random() * 0.003,
+                            color: Math.random() > 0.5 ? '#3884FF' : '#00D4AA'
+                        });
+                    }
+                }
+            }
+
+            function getPoint(path, progress) {
+                const segs = path.length - 1;
+                const scaled = progress * segs;
+                const idx = Math.min(Math.floor(scaled), segs - 1);
+                const t = scaled - idx;
+                const p1 = path[idx],
+                    p2 = path[idx + 1];
+                return { x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t };
+            }
+
+            function loop() {
+                ctx.clearRect(0, 0, w, h);
+                time += 0.008;
+                ctx.save();
+                ctx.translate(w / 2, h / 2);
+                ctx.scale(1, 0.5);
+                ctx.rotate(Math.PI / 4);
+
+                traces.forEach(tr => {
+                    ctx.strokeStyle = tr.color;
+                    ctx.lineWidth = 1.8;
+                    ctx.beginPath();
+                    tr.path.forEach((p, i) => {
+                        if (i === 0) ctx.moveTo(p.x, p.y);
+                        else ctx.lineTo(p.x, p.y);
+                    });
+                    ctx.stroke();
+                });
+
+                signals.forEach(sig => {
+                    sig.progress += sig.speed;
+                    if (sig.progress > 1) sig.progress = 0;
+                    const tr = traces[sig.traceIdx];
+                    if (!tr) return;
+                    const pos = getPoint(tr.path, sig.progress);
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = sig.color;
+                    ctx.shadowColor = sig.color;
+                    ctx.shadowBlur = 16;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                // 3D chip silhouette at center
+                const size = 80;
+                const thick = 16;
+                for (let i = 0; i < thick; i++) {
+                    ctx.translate(-1, -1);
+                    ctx.fillStyle = i === thick - 1 ? '#0A1428' : '#111F33';
+                    ctx.strokeStyle = i === thick - 1 ? 'rgba(56,132,255,0.30)' : 'transparent';
+                    ctx.lineWidth = 1.5;
+                    ctx.fillRect(-size / 2, -size / 2, size, size);
+                    if (i === thick - 1) ctx.strokeRect(-size / 2, -size / 2, size, size);
+                }
+
+                ctx.restore();
+                requestAnimationFrame(loop);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            loop();
+        })();
+
+        // ──────────────────────────────────────────────
+        // 2. THEME TOGGLE
+        // ──────────────────────────────────────────────
+        (function theme() {
+            const btn = document.getElementById('themeToggle');
+            const icon = btn.querySelector('i');
+            const stored = localStorage.getItem('theme');
+            const prefers = window.matchMedia('(prefers-color-scheme:dark)').matches;
+
+            if (stored === 'light' || (!stored && !prefers)) {
+                document.documentElement.style.setProperty('--color-bg', '#F0F5FC');
+                document.documentElement.style.setProperty('--color-surface', '#FFFFFF');
+                document.documentElement.style.setProperty('--color-surface-2', '#E8F0F8');
+                document.documentElement.style.setProperty('--color-surface-3', '#D6E4F0');
+                document.documentElement.style.setProperty('--color-surface-glass', 'rgba(255,255,255,0.78)');
+                document.documentElement.style.setProperty('--color-text', '#0A1628');
+                document.documentElement.style.setProperty('--color-text-2', '#1A3A5C');
+                document.documentElement.style.setProperty('--color-text-3', '#4A6A8A');
+                document.documentElement.style.setProperty('--color-text-4', '#7A94B8');
+                document.documentElement.style.setProperty('--color-border', 'rgba(56,132,255,0.15)');
+                document.documentElement.style.setProperty('--color-border-strong', 'rgba(56,132,255,0.30)');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+
+            btn.addEventListener('click', () => {
+                const isDark = document.documentElement.style.getPropertyValue('--color-bg').trim() === '#F0F5FC';
+                if (isDark) {
+                    // switch to dark
+                    document.documentElement.style.setProperty('--color-bg', '#050B14');
+                    document.documentElement.style.setProperty('--color-surface', '#0C1628');
+                    document.documentElement.style.setProperty('--color-surface-2', '#111F33');
+                    document.documentElement.style.setProperty('--color-surface-3', '#1A2D47');
+                    document.documentElement.style.setProperty('--color-surface-glass', 'rgba(12,22,40,0.72)');
+                    document.documentElement.style.setProperty('--color-text', '#EBF0F8');
+                    document.documentElement.style.setProperty('--color-text-2', '#B0C8E8');
+                    document.documentElement.style.setProperty('--color-text-3', '#7A94B8');
+                    document.documentElement.style.setProperty('--color-text-4', '#4A6A8A');
+                    document.documentElement.style.setProperty('--color-border', 'rgba(56,132,255,0.12)');
+                    document.documentElement.style.setProperty('--color-border-strong', 'rgba(56,132,255,0.28)');
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    // switch to light
+                    document.documentElement.style.setProperty('--color-bg', '#F0F5FC');
+                    document.documentElement.style.setProperty('--color-surface', '#FFFFFF');
+                    document.documentElement.style.setProperty('--color-surface-2', '#E8F0F8');
+                    document.documentElement.style.setProperty('--color-surface-3', '#D6E4F0');
+                    document.documentElement.style.setProperty('--color-surface-glass', 'rgba(255,255,255,0.78)');
+                    document.documentElement.style.setProperty('--color-text', '#0A1628');
+                    document.documentElement.style.setProperty('--color-text-2', '#1A3A5C');
+                    document.documentElement.style.setProperty('--color-text-3', '#4A6A8A');
+                    document.documentElement.style.setProperty('--color-text-4', '#7A94B8');
+                    document.documentElement.style.setProperty('--color-border', 'rgba(56,132,255,0.15)');
+                    document.documentElement.style.setProperty('--color-border-strong', 'rgba(56,132,255,0.30)');
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        })();
+
+        // ──────────────────────────────────────────────
+        // 3. MOBILE MENU
+        // ──────────────────────────────────────────────
+        (function menu() {
+            const toggle = document.getElementById('menuToggle');
+            const links = document.getElementById('navLinks');
+            toggle.addEventListener('click', () => links.classList.toggle('open'));
+            links.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => links.classList.remove('open'));
+            });
+        })();
+
+        // ──────────────────────────────────────────────
+        // 4. DATA
+        // ──────────────────────────────────────────────
+        const debugData = [{
+            id: 'eth',
+            meta: 'ETHERNET PACKETS',
+            desc: 'TX/RX Packets • ICMP Echo • IPv4 • TCP • HTTP/1.1 • Packet Capture • Payload Data • ARP • Checksum',
+            img: 'https://github.com/user-attachments/assets/71f5ce95-e4b9-401e-b2a4-340197902caf'
+        }, {
+            id: 'can',
+            meta: 'CAN FRAMES',
+            desc: 'TX/RX Frames • Standard ID • Extended ID • DLC • Data Payload • Arbitration • Bit Timing • Mailbox',
+            img: 'https://github.com/user-attachments/assets/a3aaac9b-3558-45c7-9137-c73fb86afffe'
+        }, {
+            id: 'uart',
+            meta: 'UART FRAME',
+            desc: 'TX/RX • Baud Rate Validation • Start/Stop Bits • 115200 8N1 Frame Timing & Framing Error Guard',
+            img: 'https://github.com/user-attachments/assets/bc840bb7-c1a1-46b4-8bcb-0370da4b4d49'
+        }, {
+            id: 'spi',
+            meta: 'SPI PROTOCOL',
+            desc: 'MOSI • MISO • SCK • Chip Select (CS/NSS) • Full-Duplex Synchronous High-Speed Bus',
+            img: 'https://github.com/user-attachments/assets/0d1a1da8-76dc-4b1c-a4b0-f36af1a508a3'
+        }, {
+            id: 'rtos',
+            meta: 'FREERTOS (Native API)',
+            desc: 'Tasks, Semaphores, ISR-safe APIs, Mutexes & Queues, NVIC priority rules & Preemptive Scheduler',
+            img: 'https://github.com/user-attachments/assets/a7c40b6b-5a6c-418f-a519-3bd8e4bfd165'
+        }];
+
+        const skillsData = [{
+            icon: 'fa-microchip',
+            title: 'Microcontrollers',
+            tags: ['STM32 Nucleo F411RE', 'STM32F407 Discovery', 'ARM Cortex-M4', 'ESP32', 'Arduino']
+        }, {
+            icon: 'fa-code',
+            title: 'Programming Languages',
+            tags: ['C (Bare Metal)', 'HAL Programming', 'Register Level', 'Rust & C++ (Basics)']
+        }, {
+            icon: 'fa-satellite-dish',
+            title: 'Peripherals & Protocols',
+            tags: ['RCC Clock Tree', 'Timers/PWM', 'EXTI/Interrupts', 'ADC', 'DAC', 'DMA', 'RTC', 'Watchdog', 'UART',
+                'I2C', 'SPI', 'CAN Bus (2.0)', 'Ethernet'
+            ]
+        }, {
+            icon: 'fa-arrows-spin',
+            title: 'FreeRTOS (Native API)',
+            tags: ['Task Management', 'Inter-Task Comm', 'Synchronization', 'RTOS Timers', 'Memory Management']
+        }, {
+            icon: 'fa-screwdriver-wrench',
+            title: 'Tools & IDEs',
+            tags: ['STM32CubeIDE', 'ARM GNU Toolchain', 'VS Code', 'Git/GitHub', 'Proteus']
+        }, {
+            icon: 'fa-magnifying-glass-chart',
+            title: 'Debugging & Analysis',
+            tags: ['ST-Link Debugger', 'Logic Analyzer', 'SWD/Live Expressions', 'Schematic Docs', 'Errata Docs',
+                'Datasheet Analysis', 'Reference Manual'
+            ]
+        }, {
+            icon: 'fa-brain',
+            title: 'Edge AI / TinyML',
+            tags: ['TensorFlow Lite Micro', 'X-CUBE-AI', 'Model Quantization', 'CCMRAM Inference', 'Python (Training)']
+        }, {
+            icon: 'fa-bolt',
+            title: 'Automation & Other',
+            tags: ['Python Automations', 'Bot Development']
+        }];
+
+        const projectsData = {
+            embedded: [{
+                id: 'e1',
+                domain: 'Bare Metal & PWM',
+                img: 'https://github.com/user-attachments/assets/1f93de42-c650-40ee-b934-581321ac7240',
+                title: '5-DOF Robotic Arm',
+                caption: 'Mobile App → ESP32 (UART) → STM32 F411RE (PWM) → Servos',
+                tech: ['STM32F411RE', 'ESP32', 'UART', 'PWM'],
+                url: 'https://github.com/aj-0/4-Dof-Robotic-ARM-Using-STM32'
+            }, {
+                id: 'e4',
+                domain: 'Bare Metal Networking',
+                img: 'https://github.com/user-attachments/assets/a538bc55-2f39-4900-b84d-0d1f3a99ab69',
+                title: 'SPI → Ethernet Ping Test',
+                caption: 'W5500 static-IP ping test on STM32F407',
+                tech: ['W5500', 'SPI', 'Bare-Metal C', 'Ethernet'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/Spi_to_Ethernet_ping'
+            }, {
+                id: 'p12',
+                domain: 'Biometric Security',
+                img: 'https://github.com/user-attachments/assets/240f431b-070c-4c79-b2e3-e3a5da34b962',
+                title: 'Fingerprint Enrollment & Authentication using R307S',
+                caption: 'Fingerprint enrollment and matching using the R307S Fingerprint Sensor interfaced with an STM32F407 via UART',
+                tech: ['UART', 'R307s', 'STM32F407', 'Security'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/Fingerprint_reader_R307s'
+            }, {
+                id: 'p1',
+                domain: 'Automotive Diagnostics',
+                img: 'https://github.com/user-attachments/assets/93ec8c0e-f855-4198-a89a-4b24f6e58dee',
+                title: 'CAN Bus — Loopback Self-Test',
+                caption: 'Internal CAN loopback for TX/RX self-diagnostic validation',
+                tech: ['STM32F407', 'CAN', 'Loopback'],
+                url: 'https://github.com/aj-0/CAN-Bus-Projects/tree/main/Can_Loopback'
+            }, {
+                id: 'p2',
+                domain: 'Automotive Bus',
+                img: 'https://github.com/user-attachments/assets/59cdc9cd-e8e5-474f-9f6d-47ca57fb574b',
+                title: 'CAN Bus — TX (Interrupt)',
+                caption: 'Periodic CAN frame TX via MCP2551, interrupt-driven',
+                tech: ['CAN', 'MCP2551', 'Interrupt'],
+                url: 'https://github.com/aj-0/CAN-Bus-Projects/tree/main/CAN%20Bus_Tx_INT'
+            }, {
+                id: 'p3',
+                domain: 'Automotive Bus',
+                img: 'https://github.com/user-attachments/assets/59cdc9cd-e8e5-474f-9f6d-47ca57fb574b',
+                title: 'CAN Bus — RX (Interrupt)',
+                caption: 'RX FIFO0 message-pending callback, mailbox-based reception',
+                tech: ['CAN', 'RX FIFO0', 'HAL'],
+                url: 'https://github.com/aj-0/CAN-Bus-Projects/tree/main/CAN%20Bus%20Rx_INT'
+            }, {
+                id: 'p4',
+                domain: 'Automotive Bus',
+                img: 'https://github.com/user-attachments/assets/173f91cc-5ea7-4454-b6c2-b229d9559677',
+                title: 'CAN Bus — Polling Mode',
+                caption: 'CAN TX/RX without interrupts, polled mailbox status',
+                tech: ['CAN', 'Polling', 'STM32'],
+                url: 'https://github.com/aj-0/CAN-Bus-Projects/tree/main/CAN%20Bus_Polling'
+            }, {
+                id: 'p7',
+                domain: 'Sensor Fusion',
+                img: 'https://github.com/user-attachments/assets/07d0a7e3-f35d-4604-ae80-6dfdc40541c9',
+                title: 'MPU6050 — I2C Gyroscope',
+                caption: 'Accelerometer/gyro data acquisition over I2C',
+                tech: ['I2C', 'MPU6050', 'STM32'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/MPU6050_I2C'
+            }, {
+                id: 'p8',
+                domain: 'Display Drivers',
+                img: 'https://github.com/user-attachments/assets/f10d19e4-fc26-4810-a69b-a28e5e5cd5dd',
+                title: '16x2 LCD via PCF8574 (I2C)',
+                caption: 'I2C LCD driver with centered-text helper, PB6/PB7 @ 0x27',
+                tech: ['I2C', 'PCF8574', 'LCD'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/16x2_lcd_pcf8574'
+            }, {
+                id: 'p9',
+                domain: 'Storage & Filesystems',
+                img: 'https://github.com/user-attachments/assets/ab830209-ee07-46c6-b99c-51aa9987251b',
+                title: 'SD Card Logging (FatFs)',
+                caption: 'FatFs write logging over SPI, debugged silent write failure',
+                tech: ['FatFs', 'SPI', 'SD Card'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/SDcard-interfacing-Testing-'
+            }, {
+                id: 'p10',
+                domain: 'Actuator Control',
+                img: 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80',
+                title: 'DC Motor Speed Control',
+                caption: 'PWM-based DC motor speed control via Timers',
+                tech: ['PWM', 'Timers', 'DC Motor'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/DC%20Motor%20Speed%20Control'
+            }, {
+                id: 'p11',
+                domain: 'Timer Modulation',
+                img: 'https://images.unsplash.com/photo-1601132359864-c974e79890ac?w=800&q=80',
+                title: 'LED Breathing (PWM)',
+                caption: 'Smooth LED fade via duty-cycle sweep on Timer PWM',
+                tech: ['PWM', 'Timers', 'GPIO'],
+                url: 'https://github.com/aj-0/STM32_Interfacing/tree/main/LEDBreathing%20using%20PWM'
+            }],
+            freertos: [{
+                id: 'e2',
+                domain: 'RTOS Architecture',
+                img: 'https://github.com/user-attachments/assets/0804920d-b85a-478b-8939-cbd9b357f8cc',
+                title: 'FreeRTOS Fundamentals',
+                caption: 'Native FreeRTOS APIs — tasks, semaphores, ISR-safe patterns',
+                tech: ['FreeRTOS', 'STM32', 'Semaphores'],
+                url: 'https://github.com/aj-0/FreeRTOS/tree/main/Basic-FreeRTOS'
+            }, {
+                id: 'e3',
+                domain: 'Embedded Web Services',
+                img: 'https://github.com/user-attachments/assets/b9c057e7-c279-4032-8d0c-02628bced439',
+                title: 'SPI→Ethernet Webserver (FreeRTOS)',
+                caption: 'W5500 over SPI, ioLibrary_Driver, served from a FreeRTOS task',
+                tech: ['W5500', 'SPI', 'FreeRTOS', 'Ethernet'],
+                url: 'https://github.com/aj-0/FreeRTOS/tree/main/Spi_to_Ethernet_Webserver'
+            }, {
+                id: 'p5',
+                domain: 'Real-Time Bus TX',
+                img: 'https://github.com/user-attachments/assets/6c976d71-35bf-4eb3-9bae-3d69eff1a1d8',
+                title: 'CAN Bus TX — FreeRTOS Task',
+                caption: 'CAN transmission wrapped in a dedicated FreeRTOS task',
+                tech: ['CAN', 'FreeRTOS', 'Tasks'],
+                url: 'https://github.com/aj-0/FreeRTOS/tree/main/CAN%20Bus_Freertos_Tx'
+            }, {
+                id: 'p6',
+                domain: 'Real-Time Bus RX',
+                img: 'https://github.com/user-attachments/assets/6c976d71-35bf-4eb3-9bae-3d69eff1a1d8',
+                title: 'CAN Bus RX — FreeRTOS Task',
+                caption: 'ISR-to-task signaling for CAN reception via binary semaphore',
+                tech: ['CAN', 'FreeRTOS', 'ISR-safe API'],
+                url: 'https://github.com/aj-0/FreeRTOS/tree/main/CANBUS_Freertos_Rx'
+            }],
+            ai: [{
+                id: 'a1',
+                domain: 'Edge AI / Neural Inference',
+                img: 'https://github.com/user-attachments/assets/aaecc8b0-c011-4f02-843d-3f3c7f2c01f0',
+                title: 'TinyML — Sine Wave Prediction',
+                caption: 'TFLite Micro model deployed on STM32F407 via X-CUBE-AI',
+                tech: ['TFLite Micro', 'X-CUBE-AI', 'CCMRAM'],
+                url: 'https://github.com/aj-0/Tinyml-on-STM32-F407'
+            }],
+            pcb: [{
+                id: 'pcb1',
+                domain: 'Hardware Design',
+                img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80',
+                title: 'STM32F407 4-Layer Controller Board',
+                caption: 'High-speed 4-layer PCB design with impedance-controlled differential CAN/USB routing and ground planes.',
+                tech: ['KiCad', '4-Layer PCB', 'Impedance Control', 'STM32'],
+                url: 'https://github.com/aj-0'
+            }, {
+                id: 'pcb2',
+                domain: 'Power & Interface',
+                img: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80',
+                title: 'Industrial Sensor & Power Interface Module',
+                caption: 'Buck converter power stage, optoisolated I/O channels, and ESD protection circuits for harsh environments.',
+                tech: ['Schematic Capture', 'Power Supply', 'Optoisolation', 'Protection'],
+                url: 'https://github.com/aj-0'
+            }]
+        };
+
+        const certsData = [{
+            issuer: 'Etalvis Learning',
+            name: 'Electronics Foundation Course',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQFpKOd1vv5Esg/profile-treasury-document-images_1280/B56Z1B1vJ8JsAY-/1/1774926100063?e=1786579200&v=beta&t=KSF1lWVXlnIcJ0fwGuVic-oJfXUxOzsw4GB8S5Nmj1w'
+        }, {
+            issuer: 'NIELIT Calicut',
+            name: 'Embedded Systems for Beginners',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQFll55sPhjUVQ/profile-treasury-image-shrink_1280_1280/B56Z1B5d3tGwAQ-/0/1774927079239?e=1787180400&v=beta&t=c_F4xwZzaWUlRhkIQLSzY9FL-O9VheYv_KijPCg_OCw'
+        }, {
+            issuer: 'Udemy',
+            name: 'ARM Cortex-M3 & M4 Programming',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQF7NTjNGoNmYQ/profile-treasury-image-shrink_1280_1280/B56Z21vt_FJgAQ-/0/1776870679348?e=1787180400&v=beta&t=WFOlr2X08I2x8wazqwDQOAL5flCEbo6jvV0-t8CIMzY'
+        }, {
+            issuer: 'PI SQUARE',
+            name: 'Realtime Programmming for QNX OS',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQFPvi07cjUCkA/profile-treasury-image-shrink_1280_1280/B56Z_Ry7vJJgAY-/0/1785931218150?e=1787180400&v=beta&t=OwCA6rK7muDvWmeDyAjyObKkaA3SPuDXQztyVeePa6Q'
+        }, {
+            issuer: 'Infineon Technologies',
+            name: 'Industrial, IoT & Consumer Microcontrollers',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQEbFnzM-DHG6Q/profile-treasury-document-images_1920/B56Z4c0CjyKUAs-/1/1778599866500?e=1786579200&v=beta&t=zGOgbOputBzQSj-Vav_3HEeGuXUb01eNqNTQ5YQpTa8'
+        }, {
+            issuer: 'Udemy',
+            name: 'C Programming',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQFM9JpPGZOFZA/profile-treasury-image-shrink_1280_1280/B56Z1B3Fh7I8AQ-/0/1774926454397?e=1787180400&v=beta&t=YDjeDv-7Ae7lVzNahNzK_cATwC-Yfo4FRfgDtegl_ZE'
+        }, {
+            issuer: 'SKYY SKILL',
+            name: 'AUTOMOTIVE APPLICATIONS',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQEj6ru3sOZY1w/profile-treasury-document-images_1280/B56Z1B4g5hKgAU-/1/1774926832847?e=1787184000&v=beta&t=OLbjB53ILI_WeMjvrtpQaxSL_pNAfsC-iH2zIewZz1w'
+        }, {
+            issuer: 'Microchip University',
+            name: 'PIC:8 bit MCU',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQGKbsfQRyr5aQ/profile-treasury-document-cover-images_1920/B56Z1Bw9rZHoBM-/0/1774924850242?e=1787180400&v=beta&t=caICOGkHZT_XsFswkokwiBMoGbeB3mFh60gPZxtsLKg'
+        }, {
+            issuer: 'IIT Alumni — PALS Innowah Cluster',
+            name: 'PALS Innowah Cluster Finals (Competition Certificate)',
+            img: 'https://media.licdn.com/dms/image/v2/D562DAQEGKBxUpnjePA/profile-treasury-image-shrink_1280_1280/B56Z1Bzq5qGsAQ-/0/1774925558364?e=1787180400&v=beta&t=qlRUnKi-i9SxC-gIT02jvRfiZhebcVC1ZtVk3Iz3LHg'
+        }];
+
+        const resourcesData = [{
+            name: 'Nucleo Reference Manual.pdf',
+            sub: 'STMicroelectronics · UM1724 User Manual',
+            url: 'https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf'
+        }, {
+            name: 'Nucleo Pinout.pdf',
+            sub: 'STMicroelectronics · Morpho & Arduino Headers',
+            url: 'https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf'
+        }, {
+            name: 'Nucleo Data Sheet.pdf',
+            sub: 'STMicroelectronics · NUCLEO-F411RE Data Brief',
+            url: 'https://www.st.com/resource/en/data_brief/nucleo-f411re.pdf'
+        }, {
+            name: 'HAL Driver.pdf',
+            sub: 'STMicroelectronics · UM1856 HAL & LL Drivers',
+            url: 'https://www.st.com/resource/en/user_manual/dm00154093-description-of-stm32f4-hal-and-lowlayer-drivers-stmicroelectronics.pdf'
+        }, {
+            name: 'FreeRTOS Reference Manual V10.0.0.pdf',
+            sub: 'Amazon FreeRTOS · Real-Time Kernel API Guide',
+            url: 'https://www.freertos.org/Documentation/RTOS_book.html'
+        }, {
+            name: 'ARM Cortex M4 Guide.pdf',
+            sub: 'ARM Holdings · DUI0553 Generic User Guide',
+            url: 'https://developer.arm.com/documentation/dui0553/latest'
+        }, {
+            name: 'Discovery User Manual.pdf',
+            sub: 'STMicroelectronics · UM1472 Discovery Kit',
+            url: 'https://www.st.com/resource/en/user_manual/dm00039084-stm32f4discovery-stmicroelectronics.pdf'
+        }, {
+            name: 'Discovery Schematic.pdf',
+            sub: 'STMicroelectronics · MB997 Board Schematic',
+            url: 'https://www.st.com/resource/en/schematic_pack/mb997-f407vgt6-e01_schematic.pdf'
+        }, {
+            name: 'Discovery Reference.pdf',
+            sub: 'STMicroelectronics · RM0090 Reference Manual',
+            url: 'https://www.st.com/resource/en/reference_manual/dm00031020-stm32f405415-stm32f407417-stm32f427437-and-stm32f429439-advanced-armbased-32bit-mcus-stmicroelectronics.pdf'
+        }, {
+            name: 'Discovery Data Sheet.pdf',
+            sub: 'STMicroelectronics · STM32F407VG Datasheet',
+            url: 'https://www.st.com/resource/en/datasheet/stm32f407vg.pdf'
+        }];
+
+        // ──────────────────────────────────────────────
+        // 5. RENDER FUNCTIONS
+        // ──────────────────────────────────────────────
+
+        // 5a. Diagnostics Carousel
+        (function diag() {
+            const track = document.getElementById('diagTrack');
+            const dots = document.getElementById('diagDots');
+            const tabs = document.getElementById('diagTabs');
+            if (!track) return;
+            let current = 0;
+            const total = debugData.length;
+            let autoplay;
+
+            track.innerHTML = debugData.map(item => `
+                <div class="carousel-slide">
+                    <div class="img-wrap"><img src="${item.img}" alt="${item.meta}" loading="lazy" /></div>
+                    <div class="caption">
+                        <div class="meta">${item.meta}</div>
+                        <div class="desc">${item.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            dots.innerHTML = debugData.map((_, i) =>
+                `<button class="${i===0?'active':''}" data-idx="${i}"></button>`
+            ).join('');
+
+            tabs.innerHTML = debugData.map((item, i) =>
+                `<button class="${i===0?'active':''}" data-idx="${i}">${item.meta.split(' ')[0]}</button>`
+            ).join('');
+
+            function goTo(idx) {
+                current = (idx + total) % total;
+                track.style.transform = `translateX(-${current*100}%)`;
+                document.querySelectorAll('#diagDots button').forEach((b, i) => b.classList.toggle('active', i === current));
+                document.querySelectorAll('#diagTabs button').forEach((b, i) => b.classList.toggle('active', i === current));
+            }
+
+            function next() { goTo(current + 1); }
+
+            function startAuto() { if (autoplay) clearInterval(autoplay);
+                autoplay = setInterval(next, 2800); }
+
+            function stopAuto() { if (autoplay) clearInterval(autoplay);
+                autoplay = null; }
+
+            document.querySelectorAll('#diagDots button, #diagTabs button').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.idx);
+                    if (!isNaN(idx)) { goTo(idx);
+                        stopAuto();
+                        startAuto(); }
+                });
+            });
+
+            const viewport = track.closest('.carousel-viewport');
+            if (viewport) {
+                viewport.addEventListener('mouseenter', stopAuto);
+                viewport.addEventListener('mouseleave', startAuto);
+            }
+
+            startAuto();
+            window.diagGo = goTo;
+        })();
+
+        // 5b. Skills
+        (function renderSkills() {
+            const grid = document.getElementById('skillsGrid');
+            if (!grid) return;
+            grid.innerHTML = skillsData.map(s => `
+                <div class="skill-module">
+                    <div class="head">
+                        <div class="icon"><i class="fas ${s.icon}"></i></div>
+                        <h4>${s.title}</h4>
+                    </div>
+                    <div class="skill-tags">
+                        ${s.tags.map(t => `<span class="skill-tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        })();
+
+        // 5c. Projects
+        const catLabels = { embedded: 'Bare Metal', freertos: 'FreeRTOS', ai: 'Tiny ML', pcb: 'PCB Design' };
+        let currentFilter = 'all';
+
+        function renderProjects(filter) {
+            const grid = document.getElementById('projectsGrid');
+            if (!grid) return;
+            const keys = filter === 'all' ? Object.keys(projectsData) : [filter];
+            let html = '',
+                count = 0;
+            keys.forEach(cat => {
+                if (projectsData[cat]) {
+                    projectsData[cat].forEach(p => {
+                        count++;
+                        const idNum = String(count).padStart(2, '0');
+                        const badge = catLabels[cat] || cat.toUpperCase();
+                        html += `
+                            <div class="project-card" data-cat="${cat}">
+                                <div class="meta"><span class="id">#${idNum} · ${p.id.toUpperCase()}</span><span>${p.domain || badge}</span></div>
+                                <div class="media" onclick="window.open('${p.url}','_blank','noopener')">
+                                    <img src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'" />
+                                </div>
+                                <div class="body">
+                                    <div class="title" onclick="window.open('${p.url}','_blank','noopener')">${p.title}</div>
+                                    <div class="caption">${p.caption}</div>
+                                    <div class="techs">${p.tech.map(t => `<span>${t}</span>`).join('')}</div>
+                                    <div class="footer">
+                                        <a class="link" href="${p.url}" target="_blank" rel="noopener"><i class="fab fa-github"></i> Inspect Project →</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            grid.innerHTML = html || '<p style="grid-column:1/-1;text-align:center;color:var(--color-text-3);padding:2rem;">No projects in this category.</p>';
+        }
+
+        function initFilters() {
+            const bar = document.getElementById('filterBar');
+            if (!bar) return;
+            const filters = ['all', 'embedded', 'freertos', 'ai', 'pcb'];
+            const labels = { all: 'All Modules', embedded: 'Bare Metal', freertos: 'FreeRTOS', ai: 'Tiny ML',
+                pcb: 'PCB Design' };
+            bar.innerHTML = filters.map(f =>
+                `<button class="filter-btn ${f==='all'?'active':''}" data-filter="${f}">${labels[f]||f}</button>`
+            ).join('');
+            bar.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-btn');
+                if (!btn) return;
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderProjects(currentFilter);
+            });
+        }
+
+        // 5d. Certifications
+        function renderCerts() {
+            const grid = document.getElementById('certsGrid');
+            if (!grid) return;
+            grid.innerHTML = certsData.map((c, i) => `
+                <div class="cert-card" onclick="openLightbox(${i})">
+                    <div class="frame">
+                        <img src="${c.img}" alt="${c.name}" loading="lazy" onerror="this.style.display='none'" />
+                        <div class="overlay"><span><i class="fas fa-search-plus"></i> Inspect Certificate</span></div>
+                    </div>
+                    <div class="info">
+                        <div class="issuer">${c.issuer}</div>
+                        <div class="name">${c.name}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openLightbox(idx) {
+            const modal = document.getElementById('certLightbox');
+            const img = document.getElementById('lightboxImg');
+            if (!modal || !img) return;
+            img.src = certsData[idx].img;
+            img.alt = certsData[idx].name;
+            modal.classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('certLightbox')?.classList.remove('open');
+        }
+        window.openLightbox = openLightbox;
+        window.closeLightbox = closeLightbox;
+
+        // 5e. Resources
+        function renderResources() {
+            const box = document.getElementById('resourcesBox');
+            if (!box) return;
+            box.innerHTML = resourcesData.map((r, i) => `
+                <a class="resource-item" href="${r.url}" target="_blank" rel="noopener">
+                    <div class="left">
+                        <span class="idx">${String(i+1).padStart(2,'0')}</span>
+                        <div class="info">
+                            <div class="name">${r.name}</div>
+                            <div class="sub">${r.sub}</div>
+                        </div>
+                    </div>
+                    <span class="arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                </a>
+            `).join('');
+        }
+
+        // ──────────────────────────────────────────────
+        // 6. INIT
+        // ──────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProjects('all');
+            initFilters();
+            renderCerts();
+            renderResources();
+
+            // Smooth scroll for nav links
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', e => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        const target = document.querySelector(href);
+                        if (target) {
+                            e.preventDefault();
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+
+            // Close lightbox on Escape
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeLightbox();
+            });
+        });
+    </script>
+</body>
+</html>
