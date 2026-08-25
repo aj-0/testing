@@ -1,3 +1,8 @@
+Here is the completely updated, standalone code. I have fixed the navbar overflowing bug, changed the "0x08" icon to a microchip icon, added full Light/Dark mode functionality with a toggle switch, and included a "Download Resume" button pointing to your GitHub repository.
+
+You can copy and paste this code directly:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +18,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
+    /* ========================================================= */
+    /* CSS VARIABLES (LIGHT MODE DEFAULT)                        */
+    /* ========================================================= */
     :root {
       --bg-canvas: #F8FAFC;
       --bg-surface: #FFFFFF;
@@ -20,6 +28,7 @@
       --bg-surface-elevated: rgba(255, 255, 255, 0.95);
       --bg-subtle: #F1F5F9;
       --bg-accent-subtle: #E8F2FB;
+      --grid-color: rgba(15, 23, 42, 0.04);
 
       --st-blue-primary: #006699;
       --st-blue-hover: #004D73;
@@ -57,9 +66,33 @@
       --transition-fast: 0.2s var(--ease-smooth);
       --transition-medium: 0.35s var(--ease-spring);
       --transition-slow: 0.6s var(--ease-spring);
-      --transition-carousel: 1s cubic-bezier(0.25, 1, 0.5, 1);
-
+      --transition-carousel: 0.5s cubic-bezier(0.25, 1, 0.5, 1);
       --glass-blur: blur(20px) saturate(180%);
+    }
+
+    /* ========================================================= */
+    /* CSS VARIABLES (DARK MODE OVERRIDES)                       */
+    /* ========================================================= */
+    [data-theme="dark"] {
+      --bg-canvas: #090E17;
+      --bg-surface: #131C2D;
+      --bg-surface-translucent: rgba(19, 28, 45, 0.85);
+      --bg-surface-elevated: rgba(30, 41, 59, 0.95);
+      --bg-subtle: #1E293B;
+      --bg-accent-subtle: rgba(2, 132, 199, 0.15);
+      --grid-color: rgba(255, 255, 255, 0.03);
+
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+
+      --border-subtle: rgba(51, 65, 85, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.08);
+
+      --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.3), 0 1px 4px -1px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-float: 0 28px 60px -15px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0.2);
     }
 
     *, *::before, *::after {
@@ -83,9 +116,10 @@
       overflow-x: hidden;
       position: relative;
       min-height: 100vh;
+      transition: background-color var(--transition-medium), color var(--transition-medium);
     }
 
-    #gravityCanvas {
+    #mcuBackgroundCanvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -93,7 +127,7 @@
       height: 100vh;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.9;
+      opacity: 0.8;
     }
 
     .engineering-grid-overlay {
@@ -105,9 +139,9 @@
       z-index: 0;
       pointer-events: none;
       background-image: 
-        radial-gradient(circle at 50% 50%, rgba(0, 102, 153, 0.03) 0%, transparent 70%),
-        linear-gradient(to right, rgba(226, 232, 240, 0.35) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.35) 1px, transparent 1px);
+        radial-gradient(circle at 50% 50%, var(--grid-color) 0%, transparent 70%),
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
       background-size: 100% 100%, 48px 48px, 48px 48px;
     }
 
@@ -119,6 +153,7 @@
       padding: 0 1.75rem;
     }
 
+    /* Fixed Navbar overflowing issue */
     .floating-header-wrapper {
       position: fixed;
       top: 1.25rem;
@@ -145,7 +180,7 @@
       border-radius: 9999px;
       box-shadow: var(--shadow-float);
       transition: all var(--transition-medium);
-      max-width: 960px;
+      max-width: max-content; /* Ensure the pill wraps contents tightly */
       width: 100%;
     }
 
@@ -172,10 +207,7 @@
       align-items: center;
       justify-content: center;
       color: #38BDF8;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 1.1rem;
       box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
       position: relative;
       overflow: hidden;
@@ -222,7 +254,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.25rem;
       list-style: none;
     }
 
@@ -231,7 +263,7 @@
       text-decoration: none;
       font-size: 0.88rem;
       font-weight: 600;
-      padding: 0.45rem 0.95rem;
+      padding: 0.45rem 0.8rem;
       border-radius: 9999px;
       transition: all var(--transition-fast);
       display: inline-flex;
@@ -243,6 +275,29 @@
     .nav-link:hover, .nav-link.active {
       color: var(--st-blue-primary);
       background: var(--bg-accent-subtle);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--st-blue-primary);
     }
 
     .mobile-nav-toggle {
@@ -430,6 +485,7 @@
       transform: translateY(-3px);
       box-shadow: 0 18px 35px -8px rgba(0, 102, 153, 0.45);
       background: linear-gradient(135deg, #004D73 0%, #006699 100%);
+      color: #FFFFFF;
     }
 
     .btn-glass-secondary {
@@ -466,114 +522,143 @@
       min-height: 480px;
     }
 
-    .anti-gravity-stage {
+    /* NEW CYBER CORE DESIGN FOR HERO */
+    .cyber-core-container {
       position: relative;
-      width: 100%;
-      max-width: 440px;
-      height: 460px;
+      width: 440px;
+      height: 440px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+      animation: floatCore 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatCore {
+      0% { transform: translateY(0px) rotateX(15deg) rotateY(-10deg); }
+      100% { transform: translateY(-15px) rotateX(20deg) rotateY(-5deg); }
+    }
+
+    .cyber-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      box-sizing: border-box;
       transform-style: preserve-3d;
     }
 
-    .acrylic-pcb-layer {
-      position: absolute;
+    .ring-1 {
       width: 360px;
       height: 360px;
-      border-radius: 28px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(240, 246, 252, 0.3) 100%);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255, 255, 255, 0.85);
-      box-shadow: var(--shadow-float);
-      transform: rotateX(55deg) rotateZ(-25deg) translateZ(-40px);
-      transition: transform var(--transition-slow);
+      border-top: 2px solid var(--st-blue-primary);
+      border-bottom: 2px solid var(--st-cyan-glow);
+      animation: spinY 12s linear infinite;
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.1);
+    }
+
+    .ring-2 {
+      width: 280px;
+      height: 280px;
+      border-left: 2px solid var(--st-copper);
+      border-right: 2px solid var(--st-teal-pulse);
+      animation: spinY 8s linear infinite reverse;
+      box-shadow: inset 0 0 15px rgba(217, 119, 6, 0.1);
+    }
+
+    .ring-3 {
+      width: 210px;
+      height: 210px;
+      border: 1px dashed rgba(2, 132, 199, 0.4);
+      animation: spinZ 20s linear infinite;
+    }
+
+    @keyframes spinY {
+      0% { transform: rotateZ(0deg) rotateX(60deg); }
+      100% { transform: rotateZ(360deg) rotateX(60deg); }
+    }
+    
+    @keyframes spinZ {
+      0% { transform: rotateZ(0deg); }
+      100% { transform: rotateZ(360deg); }
+    }
+
+    .cyber-chip-new {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      background: #0B111E;
+      border-radius: 16px;
+      border: 2px solid #0284C7;
+      box-shadow: 0 0 40px rgba(2, 132, 199, 0.4), inset 0 0 20px rgba(2, 132, 199, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transform: translateZ(30px);
+    }
+
+    .cyber-chip-new::before {
+      content: '';
+      position: absolute;
+      top: -12px; bottom: -12px; left: 15px; right: 15px;
+      background: repeating-linear-gradient(to right, transparent, transparent 8px, #D97706 8px, #D97706 12px);
+      z-index: -1;
+    }
+
+    .cyber-chip-new::after {
+      content: '';
+      position: absolute;
+      left: -12px; right: -12px; top: 15px; bottom: 15px;
+      background: repeating-linear-gradient(to bottom, transparent, transparent 8px, #D97706 8px, #D97706 12px);
+      z-index: -1;
+    }
+
+    .chip-surface-content {
+      text-align: center;
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
       overflow: hidden;
     }
 
-    .pcb-trace-svg {
+    .chip-surface-content::before {
+      content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.6;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+      transform: skewX(-20deg);
+      animation: chipScan 4s infinite;
     }
 
-    .mcu-chip-3d {
-      position: relative;
-      width: 190px;
-      height: 190px;
-      background: #18202F;
-      border-radius: 12px;
-      transform: rotateX(55deg) rotateZ(-25deg) translateZ(50px);
-      box-shadow: 
-        -15px 25px 40px rgba(0, 40, 80, 0.25),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.8);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 18px;
-      cursor: grab;
-      transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1);
-      animation: weightlessFloat 6s ease-in-out infinite alternate;
-      z-index: 10;
+    @keyframes chipScan {
+      0%, 50% { left: -100%; }
+      100% { left: 200%; }
     }
 
-    @keyframes weightlessFloat {
-      0% { transform: rotateX(55deg) rotateZ(-25deg) translateZ(40px) translateY(0px); }
-      50% { transform: rotateX(53deg) rotateZ(-23deg) translateZ(65px) translateY(-14px); }
-      100% { transform: rotateX(57deg) rotateZ(-27deg) translateZ(45px) translateY(8px); }
-    }
-
-    .chip-pin-1-notch {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #0B111A;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), 0 0.5px 1px rgba(255, 255, 255, 0.2);
-    }
-
-    .chip-etching {
-      text-align: center;
-      user-select: none;
-    }
-
-    .st-logo-icon {
+    .chip-logo {
       font-family: var(--font-mono);
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.6rem;
       color: #38BDF8;
       letter-spacing: 2px;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
     }
 
-    .chip-part-number {
+    .chip-model {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #E2E8F0;
       letter-spacing: 1px;
-    }
-
-    .chip-details {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: #94A3B8;
-      letter-spacing: 1.2px;
-    }
-
-    .chip-arm-badge {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      color: #64748B;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 6px;
     }
 
     .floating-hud-tag {
@@ -605,11 +690,11 @@
       color: var(--st-blue-primary);
     }
 
-    .hud-tag-1 { top: 12%; left: -5%; animation: orbitalFloat1 7s ease-in-out infinite alternate; }
-    .hud-tag-2 { top: 6%; right: 0%; animation: orbitalFloat2 8s ease-in-out infinite alternate; }
-    .hud-tag-3 { bottom: 18%; left: -10%; animation: orbitalFloat3 6.5s ease-in-out infinite alternate; }
-    .hud-tag-4 { bottom: 10%; right: -5%; animation: orbitalFloat1 9s ease-in-out infinite alternate; }
-    .hud-tag-5 { top: 48%; right: -15%; animation: orbitalFloat2 7.5s ease-in-out infinite alternate; }
+    .hud-tag-1 { top: 8%; left: -5%; animation: orbitalFloat1 7s ease-in-out infinite alternate; }
+    .hud-tag-2 { top: 4%; right: -5%; animation: orbitalFloat2 8s ease-in-out infinite alternate; }
+    .hud-tag-3 { bottom: 12%; left: -10%; animation: orbitalFloat3 6.5s ease-in-out infinite alternate; }
+    .hud-tag-4 { bottom: 6%; right: -10%; animation: orbitalFloat1 9s ease-in-out infinite alternate; }
+    .hud-tag-5 { top: 45%; right: -25%; animation: orbitalFloat2 7.5s ease-in-out infinite alternate; }
 
     @keyframes orbitalFloat1 {
       0% { transform: translateY(0px) rotate(0deg); }
@@ -917,7 +1002,7 @@
       border-radius: 9999px;
     }
 
-    /* Diagnostics 1s Carousel */
+    /* Diagnostics Carousel - MEDIUM SIZE */
     .lab-showcase-container {
       background: var(--bg-surface-translucent);
       backdrop-filter: var(--glass-blur);
@@ -926,7 +1011,7 @@
       padding: 2.25rem 2.25rem 2.5rem;
       box-shadow: var(--shadow-float);
       margin-bottom: 2rem;
-      max-width: 1100px;
+      max-width: 850px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -1017,7 +1102,7 @@
     .lab-slide-img-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 8.5;
+      aspect-ratio: 16 / 9;
       background: #0F172A;
       overflow: hidden;
     }
@@ -1025,7 +1110,7 @@
     .lab-slide-img-wrap img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       display: block;
     }
 
@@ -1246,7 +1331,7 @@
     .capsule-media {
       width: 100%;
       height: 200px;
-      background: #F1F5F9;
+      background: var(--bg-subtle);
       position: relative;
       overflow: hidden;
       cursor: pointer;
@@ -1673,18 +1758,12 @@
       color: var(--st-blue-primary);
     }
 
+    /* Media Queries */
     @media (max-width: 1024px) {
-      .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .hero-content-pane { align-items: center; text-align: center; }
-      .hero-summary-text { margin-left: auto; margin-right: auto; }
-      .hero-cta-group { justify-content: center; }
-      .about-grid-layout { grid-template-columns: 1fr; }
-      .lab-slide-img-wrap { aspect-ratio: 16 / 10; }
-    }
-
-    @media (max-width: 768px) {
       .floating-header-wrapper { top: 0.75rem; padding: 0 0.75rem; }
       .floating-navbar { padding: 0.6rem 1rem; }
+      
+      /* Display Mobile Hamburger Menu trigger */
       .nav-links {
         display: none;
         position: absolute;
@@ -1701,11 +1780,25 @@
       }
       .nav-links.mobile-active { display: flex; }
       .mobile-nav-toggle { display: block; }
+
+      .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-content-pane { align-items: center; text-align: center; }
+      .hero-summary-text { margin-left: auto; margin-right: auto; }
+      .hero-cta-group { justify-content: center; }
+      .about-grid-layout { grid-template-columns: 1fr; }
+      .lab-slide-img-wrap { aspect-ratio: 16 / 10; }
+    }
+
+    @media (max-width: 768px) {
       section { padding: 4.5rem 0 2rem; }
       .hero-showcase { padding-top: 6rem; }
       .hero-headline { font-size: 2.35rem; }
-      .acrylic-pcb-layer { width: 280px; height: 280px; }
-      .mcu-chip-3d { width: 160px; height: 160px; padding: 12px; }
+      .cyber-core-container { width: 300px; height: 300px; }
+      .ring-1 { width: 240px; height: 240px; }
+      .ring-2 { width: 180px; height: 180px; }
+      .ring-3 { width: 140px; height: 140px; }
+      .cyber-chip-new { width: 100px; height: 100px; }
+      .chip-logo { font-size: 1.2rem; }
       .floating-hud-tag { font-size: 0.68rem; padding: 0.3rem 0.65rem; }
       .footer-content { flex-direction: column; text-align: center; }
     }
@@ -1713,15 +1806,16 @@
 </head>
 <body>
 
-  <!-- Background Multi-Layer Zero-Gravity Engine -->
-  <canvas id="gravityCanvas"></canvas>
+  <!-- New 3D Isometric Microcontroller Network Engine -->
+  <canvas id="mcuBackgroundCanvas"></canvas>
   <div class="engineering-grid-overlay"></div>
 
   <!-- Floating Navigation Bar -->
   <header class="floating-header-wrapper">
     <nav class="floating-navbar" aria-label="Main Navigation">
       <a href="#home" class="nav-brand">
-        <div class="brand-die-icon">0x08</div>
+        <!-- Changed 0x08 text to a small microchip icon -->
+        <div class="brand-die-icon"><i class="fas fa-microchip"></i></div>
         <div class="brand-text-block">
           <span class="brand-name">AJAY C</span>
           <span class="brand-title-badge">STM32 ARCHITECT</span>
@@ -1739,9 +1833,15 @@
         <li><a href="#contact" class="nav-link"><i class="fas fa-paper-plane"></i> Contact</a></li>
       </ul>
 
-      <button class="mobile-nav-toggle" aria-label="Toggle Menu">
-        <i class="fas fa-bars"></i>
-      </button>
+      <!-- Navbar Actions (Theme Toggle & Hamburger) -->
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle Dark/Light Mode">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="mobile-nav-toggle" aria-label="Toggle Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
     </nav>
   </header>
 
@@ -1771,74 +1871,57 @@
 
           <div class="hero-cta-group">
             <a href="#projects" class="btn-silicon-primary">
-              <i class="fas fa-code-branch"></i> Explore Firmware Projects
+              <i class="fas fa-code-branch"></i> Explore Firmware
             </a>
             <a href="#debugging" class="btn-glass-secondary">
-              <i class="fas fa-magnifying-glass-chart"></i> View Logic Diagnostics
+              <i class="fas fa-magnifying-glass-chart"></i> DEBUGGING 
+            </a>
+            <!-- Added Download Resume Button pointing to Github -->
+            <a href="https://raw.githubusercontent.com/aj-0/testing/main/AJ.pdf" target="_blank" download class="btn-glass-secondary">
+              <i class="fas fa-file-pdf"></i> Download Resume
             </a>
           </div>
         </div>
 
-        <!-- 3D Anti-Gravity MCU Stage -->
+        <!-- NEW High-Tech Cyber Core Design -->
         <div class="hero-stage-pane">
-          <div class="anti-gravity-stage">
+          <div class="cyber-core-container">
+            <div class="cyber-ring ring-1"></div>
+            <div class="cyber-ring ring-2"></div>
+            <div class="cyber-ring ring-3"></div>
             
-            <!-- Layered Transparent Acrylic Substrate -->
-            <div class="acrylic-pcb-layer">
-              <svg class="pcb-trace-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="200" cy="200" r="140" stroke="rgba(2, 132, 199, 0.35)" stroke-width="1.5" stroke-dasharray="6 4"/>
-                <circle cx="200" cy="200" r="90" stroke="rgba(217, 119, 6, 0.4)" stroke-width="1.2"/>
-                <path d="M50 200 H140 L170 170 V90" stroke="rgba(2, 132, 199, 0.5)" stroke-width="1.8"/>
-                <path d="M350 200 H260 L230 230 V310" stroke="rgba(2, 132, 199, 0.5)" stroke-width="1.8"/>
-                <path d="M200 50 V140 L230 170 H310" stroke="rgba(217, 119, 6, 0.5)" stroke-width="1.8"/>
-                <path d="M200 350 V260 L170 230 H90" stroke="rgba(217, 119, 6, 0.5)" stroke-width="1.8"/>
-                <circle cx="140" cy="200" r="3" fill="#D97706"/>
-                <circle cx="260" cy="200" r="3" fill="#D97706"/>
-                <circle cx="200" cy="140" r="3" fill="#0284C7"/>
-                <circle cx="200" cy="260" r="3" fill="#0284C7"/>
-              </svg>
-            </div>
-
-            <!-- Realistic 3D STM32F407 Microcontroller -->
-            <div class="mcu-chip-3d">
-              <div class="chip-pin-1-notch"></div>
-              <div class="chip-etching">
-                <div class="st-logo-icon">ST</div>
-                <div class="chip-part-number">STM32F407VGT6</div>
-                <div class="chip-details">ARM 991KA 93 G4 MYS</div>
-              </div>
-              <div class="chip-arm-badge">
-                <span>CORTEX-M4</span>
-                <span>LQFP-100</span>
+            <div class="cyber-chip-new">
+              <div class="chip-surface-content">
+                <span class="chip-logo">ST</span>
+                <span class="chip-model">STM32F407</span>
               </div>
             </div>
 
             <!-- Floating Zero-Gravity Specification Capsules -->
             <div class="floating-hud-tag hud-tag-1">
               <i class="fas fa-microchip"></i>
-              <span>ARM Cortex-M4 @ 168MHz</span>
+              <span>Cortex-M4 @ 168MHz</span>
             </div>
 
             <div class="floating-hud-tag hud-tag-2">
               <i class="fas fa-network-wired"></i>
-              <span>CAN 2.0B &amp; 10/100 Eth</span>
+              <span>CAN 2.0B / ETH</span>
             </div>
 
             <div class="floating-hud-tag hud-tag-3">
               <i class="fas fa-cubes"></i>
-              <span>FreeRTOS Native APIs</span>
+              <span>FreeRTOS Core</span>
             </div>
 
             <div class="floating-hud-tag hud-tag-4">
               <i class="fas fa-brain"></i>
-              <span>TinyML / X-CUBE-AI</span>
+              <span>TinyML / AI</span>
             </div>
 
             <div class="floating-hud-tag hud-tag-5">
               <i class="fas fa-bug"></i>
-              <span>ST-Link V2 &amp; SWD</span>
+              <span>SWD / ST-Link</span>
             </div>
-
           </div>
         </div>
       </div>
@@ -2026,7 +2109,7 @@
       </div>
     </section>
 
-    <!-- SECTION 2: HARDWARE PROTOCOL & DIAGNOSTICS CAROUSEL (1-SEC SMOOTH TRANSITION) -->
+    <!-- SECTION 2: HARDWARE PROTOCOL & DIAGNOSTICS CAROUSEL -->
     <section id="debugging">
       <div class="section-header">
         <div class="section-chip-label">
@@ -2048,14 +2131,14 @@
           </div>
         </div>
 
-        <!-- 1-Second Smooth Image Viewport -->
+        <!-- Faster Carousel Image Viewport -->
         <div class="lab-carousel-viewport">
           <div class="lab-carousel-track" id="labCarouselTrack">
             <!-- Slides Populated by JS -->
           </div>
         </div>
 
-        <!-- Smooth Animated Indicator Dots -->
+        <!-- Indicator Dots -->
         <div class="lab-carousel-dots" id="labCarouselDots">
           <!-- Dots Rendered by JS -->
         </div>
@@ -2426,6 +2509,33 @@
   </footer>
 
   <script>
+    // Theme Switcher Logic
+    function initThemeToggle() {
+      const btn = document.getElementById('themeToggle');
+      const icon = btn.querySelector('i');
+      
+      const storedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (storedTheme === 'dark' || (!storedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+      }
+      
+      btn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+          icon.classList.replace('fa-sun', 'fa-moon');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+          icon.classList.replace('fa-moon', 'fa-sun');
+        }
+      });
+    }
+
     const projectsData = {
       embedded: [
         {
@@ -2689,190 +2799,146 @@
       }
     ];
 
-    class ZeroGravityEngine {
+    // UPDATED BACKGROUND ENGINE: Isometric 3D Microcontroller & Circuit Network
+    class MicrocontrollerNetworkEngine {
       constructor() {
-        this.canvas = document.getElementById('gravityCanvas');
+        this.canvas = document.getElementById('mcuBackgroundCanvas');
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
-        this.particles = [];
-        this.signalTraces = [];
-        this.mouseX = window.innerWidth / 2;
-        this.mouseY = window.innerHeight / 2;
-        this.targetMouseX = this.mouseX;
-        this.targetMouseY = this.mouseY;
+        this.traces = [];
+        this.signals = [];
+        this.time = 0;
         this.init();
       }
 
       init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
-        window.addEventListener('mousemove', (e) => {
-          this.targetMouseX = e.clientX;
-          this.targetMouseY = e.clientY;
-        });
-
-        const count = Math.min(Math.floor(window.innerWidth / 35), 45);
-        for (let i = 0; i < count; i++) this.particles.push(this.createParticle());
-        for (let i = 0; i < 6; i++) this.signalTraces.push(this.createSignalTrace(i));
+        this.generateCircuit();
         this.loop();
       }
 
       resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.generateCircuit();
       }
 
-      createParticle() {
-        const types = ['resistor', 'capacitor', 'via-gold', 'die'];
-        return {
-          x: Math.random() * this.canvas.width,
-          y: Math.random() * this.canvas.height,
-          vx: (Math.random() - 0.5) * 0.45,
-          vy: (Math.random() - 0.5) * 0.45,
-          rotation: Math.random() * Math.PI * 2,
-          vRot: (Math.random() - 0.5) * 0.008,
-          size: Math.random() * 8 + 6,
-          depth: Math.random() * 0.7 + 0.3,
-          type: types[Math.floor(Math.random() * types.length)],
-          opacity: Math.random() * 0.35 + 0.15
-        };
-      }
+      generateCircuit() {
+        this.traces = [];
+        this.signals = [];
+        const numPaths = Math.floor(window.innerWidth / 30);
+        
+        // Generate network branches emerging from center
+        for (let i = 0; i < numPaths; i++) {
+          let cx = (Math.random() - 0.5) * 250;
+          let cy = (Math.random() - 0.5) * 250;
+          let path = [{x: cx, y: cy}];
+          
+          for (let j = 0; j < 4; j++) {
+            let length = 100 + Math.random() * 300;
+            if (Math.random() > 0.5) {
+              cx += (Math.random() > 0.5 ? 1 : -1) * length;
+            } else {
+              cy += (Math.random() > 0.5 ? 1 : -1) * length;
+            }
+            path.push({x: cx, y: cy});
+          }
+          this.traces.push({ 
+            path: path, 
+            color: Math.random() > 0.5 ? 'rgba(2, 132, 199, 0.25)' : 'rgba(217, 119, 6, 0.25)' 
+          });
 
-      createSignalTrace(index) {
-        const baseY = (window.innerHeight / 7) * (index + 1);
-        const waypoints = [];
-        let curX = 0;
-        let curY = baseY + (Math.random() - 0.5) * 80;
-
-        while (curX < window.innerWidth + 200) {
-          waypoints.push({ x: curX, y: curY });
-          curX += Math.random() * 200 + 150;
-          curY += (Math.random() - 0.5) * 120;
+          // Add travelling signals
+          for(let k = 0; k < 2; k++) {
+             this.signals.push({
+               traceIdx: i,
+               progress: Math.random(),
+               speed: 0.002 + Math.random() * 0.003,
+               color: Math.random() > 0.5 ? '#0284C7' : '#D97706'
+             });
+          }
         }
-
-        return {
-          waypoints,
-          packets: [
-            { progress: Math.random(), speed: 0.0012 + Math.random() * 0.001 },
-            { progress: Math.random(), speed: 0.0012 + Math.random() * 0.001 }
-          ],
-          color: index % 2 === 0 ? 'rgba(0, 102, 153, 0.22)' : 'rgba(217, 119, 6, 0.18)',
-          pulseColor: index % 2 === 0 ? '#0284C7' : '#D97706'
-        };
       }
 
-      getPointOnTrace(trace, progress) {
-        const pts = trace.waypoints;
-        const totalSegments = pts.length - 1;
-        const scaled = progress * totalSegments;
-        const segIndex = Math.min(Math.floor(scaled), totalSegments - 1);
-        const segT = scaled - segIndex;
-        const p1 = pts[segIndex];
-        const p2 = pts[segIndex + 1];
+      getPointOnPath(path, progress) {
+        const segments = path.length - 1;
+        const scaled = progress * segments;
+        const index = Math.min(Math.floor(scaled), segments - 1);
+        const t = scaled - index;
+        const p1 = path[index];
+        const p2 = path[index + 1];
         return {
-          x: p1.x + (p2.x - p1.x) * segT,
-          y: p1.y + (p2.y - p1.y) * segT
+          x: p1.x + (p2.x - p1.x) * t,
+          y: p1.y + (p2.y - p1.y) * t
         };
       }
 
       loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.mouseX += (this.targetMouseX - this.mouseX) * 0.05;
-        this.mouseY += (this.targetMouseY - this.mouseY) * 0.05;
+        this.time += 0.01;
 
-        this.signalTraces.forEach(trace => {
-          this.ctx.beginPath();
+        this.ctx.save();
+        // Move to center, apply isometric 3D projection
+        this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+        this.ctx.scale(1, 0.55);
+        this.ctx.rotate(Math.PI / 4);
+
+        // Draw traces
+        this.ctx.lineWidth = 2;
+        this.traces.forEach(trace => {
           this.ctx.strokeStyle = trace.color;
-          this.ctx.lineWidth = 1.2;
-          trace.waypoints.forEach((pt, i) => {
-            if (i === 0) this.ctx.moveTo(pt.x, pt.y);
+          this.ctx.beginPath();
+          trace.path.forEach((pt, i) => {
+            if(i === 0) this.ctx.moveTo(pt.x, pt.y);
             else this.ctx.lineTo(pt.x, pt.y);
           });
           this.ctx.stroke();
-
-          trace.packets.forEach(pkt => {
-            pkt.progress += pkt.speed;
-            if (pkt.progress > 1) pkt.progress = 0;
-            const pos = this.getPointOnTrace(trace, pkt.progress);
-            this.ctx.beginPath();
-            this.ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
-            this.ctx.fillStyle = trace.pulseColor;
-            this.ctx.shadowColor = trace.pulseColor;
-            this.ctx.shadowBlur = 8;
-            this.ctx.fill();
-            this.ctx.shadowBlur = 0;
-          });
         });
 
-        this.particles.forEach(p => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.rotation += p.vRot;
+        // Draw active pulsing signals
+        this.signals.forEach(sig => {
+          sig.progress += sig.speed;
+          if(sig.progress > 1) sig.progress = 0;
+          
+          let trace = this.traces[sig.traceIdx];
+          let pos = this.getPointOnPath(trace.path, sig.progress);
+          
+          this.ctx.beginPath();
+          this.ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+          this.ctx.fillStyle = sig.color;
+          this.ctx.shadowColor = sig.color;
+          this.ctx.shadowBlur = 12;
+          this.ctx.fill();
+          this.ctx.shadowBlur = 0;
+        });
 
-          const dx = (this.mouseX - window.innerWidth / 2) * 0.015 * p.depth;
-          const dy = (this.mouseY - window.innerHeight / 2) * 0.015 * p.depth;
+        // Draw 3D Microcontroller Box at center
+        const chipSize = 140;
+        const thickness = 20;
 
-          if (p.x < -40) p.x = this.canvas.width + 40;
-          if (p.x > this.canvas.width + 40) p.x = -40;
-          if (p.y < -40) p.y = this.canvas.height + 40;
-          if (p.y > this.canvas.height + 40) p.y = -40;
+        // Shadow
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        this.ctx.fillRect(-chipSize/2 + 20, -chipSize/2 + 20, chipSize, chipSize);
 
-          this.ctx.save();
-          this.ctx.translate(p.x + dx, p.y + dy);
-          this.ctx.rotate(p.rotation);
-          this.ctx.globalAlpha = p.opacity;
-
-          if (p.type === 'resistor' || p.type === 'capacitor') {
-            const w = p.size * 2;
-            const h = p.size;
-            this.ctx.fillStyle = p.type === 'resistor' ? '#334155' : '#D97706';
-            this.ctx.fillRect(-w / 2, -h / 2, w, h);
-            this.ctx.fillStyle = '#CBD5E1';
-            this.ctx.fillRect(-w / 2, -h / 2, w * 0.25, h);
-            this.ctx.fillRect(w / 2 - w * 0.25, -h / 2, w * 0.25, h);
-          } else if (p.type === 'via-gold') {
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, p.size * 0.6, 0, Math.PI * 2);
-            this.ctx.fillStyle = 'rgba(217, 119, 6, 0.4)';
-            this.ctx.fill();
-            this.ctx.strokeStyle = '#D97706';
-            this.ctx.lineWidth = 1;
-            this.ctx.stroke();
+        // 3D layers of the chip body
+        for (let i = 0; i < thickness; i++) {
+          this.ctx.translate(-1, -1);
+          if (i === thickness - 1) {
+             this.ctx.fillStyle = '#0F172A'; // Top surface
+             this.ctx.strokeStyle = '#0284C7';
+             this.ctx.lineWidth = 3;
           } else {
-            this.ctx.strokeStyle = 'rgba(0, 102, 153, 0.4)';
-            this.ctx.lineWidth = 1.2;
-            this.ctx.strokeRect(-p.size, -p.size, p.size * 2, p.size * 2);
+             this.ctx.fillStyle = '#1E293B'; // Sides
+             this.ctx.strokeStyle = 'transparent';
           }
-          this.ctx.restore();
-        });
+          this.ctx.fillRect(-chipSize/2, -chipSize/2, chipSize, chipSize);
+          if(i === thickness - 1) this.ctx.strokeRect(-chipSize/2, -chipSize/2, chipSize, chipSize);
+        }
 
+        this.ctx.restore();
         requestAnimationFrame(() => this.loop());
       }
-    }
-
-    function initHeroChipTilt() {
-      const stage = document.querySelector('.anti-gravity-stage');
-      const chip = document.querySelector('.mcu-chip-3d');
-      const layer = document.querySelector('.acrylic-pcb-layer');
-      if (!stage || !chip) return;
-
-      let mouseX = 0, mouseY = 0;
-      let curRotX = 55, curRotZ = -25;
-
-      window.addEventListener('mousemove', (e) => {
-        const rect = stage.getBoundingClientRect();
-        mouseX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-        mouseY = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
-      });
-
-      function update() {
-        curRotX += ((55 - mouseY * 12) - curRotX) * 0.08;
-        curRotZ += ((-25 + mouseX * 14) - curRotZ) * 0.08;
-        if (chip) chip.style.transform = `rotateX(${curRotX}deg) rotateZ(${curRotZ}deg) translateZ(50px)`;
-        if (layer) layer.style.transform = `rotateX(${curRotX}deg) rotateZ(${curRotZ}deg) translateZ(-40px)`;
-        requestAnimationFrame(update);
-      }
-      update();
     }
 
     class DiagnosticsCarousel {
@@ -2952,7 +3018,7 @@
 
       startAutoplay() {
         this.stopAutoplay();
-        this.autoplayInterval = setInterval(() => this.nextSlide(), 3600);
+        this.autoplayInterval = setInterval(() => this.nextSlide(), 2500);
       }
 
       stopAutoplay() {
@@ -3067,8 +3133,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      window.gravityEngine = new ZeroGravityEngine();
-      initHeroChipTilt();
+      initThemeToggle();
+      window.gravityEngine = new MicrocontrollerNetworkEngine();
       window.diagnosticsCarousel = new DiagnosticsCarousel();
       renderProjects('all');
       initProjectFilters();
@@ -3081,3 +3147,4 @@
   </script>
 </body>
 </html>
+```
